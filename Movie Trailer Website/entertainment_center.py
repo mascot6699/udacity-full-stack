@@ -2,7 +2,7 @@
 Generates the list of movies object.
 """
 
-from .media import Movie
+from media import Movie
 import csv
 
 
