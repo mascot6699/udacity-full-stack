@@ -85,7 +85,7 @@ def playerStandings():
                     "players.id = winner_id group by players.id order by wins desc"
 
     losers_query = "select players.id, count(matches.id) as losses from players left join matches on " \
-                   "players.id = winner_id group by players.id order by losses desc"
+                   "players.id = loser_id group by players.id order by losses desc"
 
     join_query = "select winners.id, winners.name, wins, wins+losses as matches from ({winners_query}) as winners " \
                  "left join ({losers_query}) as losers on winners.id = losers.id;".format(winners_query=winners_query,
@@ -106,8 +106,14 @@ def reportMatch(winner, loser):
       winner:  the id number of the player who won
       loser:  the id number of the player who lost
     """
- 
- 
+    query = "insert into matches (winner_id, loser_id) values ({winner_id}, {loser_id})".format(
+        winner_id=winner, loser_id=loser)
+    db = connect()
+    c = db.cursor()
+    c.execute(query)
+    db.commit()
+    db.close()
+
 def swissPairings():
     """
     Returns a list of pairs of players for the next round of a match.
@@ -123,8 +129,27 @@ def swissPairings():
         name1: the first player's name
         id2: the second player's unique id
         name2: the second player's name
+
+    Raise:
+      Error when number of player is less than 2 or not multiple of 2
+
+    Scope:
+      Implement bye feature (might require database change)
     """
+    results = []
 
+    standings = [(record[0], record[1]) for record in playerStandings()]
+    # since only ID and names are required
 
+    if len(standings) < 2:
+        raise KeyError("Not enough players.")
+    if len(standings) % 2:
+        raise KeyError("Current implementation requires even number of players.")
+
+    # Run a for loop from index zero to number of players in ranking skipping one index each time
+    for player_rank in range(0, len(standings), 2):
+        # appending the player at index player_rank and the next one as pairs
+        results.append(standings[player_rank] + standings[player_rank + 1])
+    return results
 
 
