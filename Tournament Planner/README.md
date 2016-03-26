@@ -1,4 +1,4 @@
-# Movie Trailer Website: Fresh Tomatoes
+# Tournament Planner Project
 
 This is the second project for the fulfillment of Udacity's [Full-Stack Web Developer Nanodegree](https://www.udacity.com/course/full-stack-web-developer-nanodegree--nd004)
 

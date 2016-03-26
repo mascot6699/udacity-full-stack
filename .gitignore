@@ -86,3 +86,6 @@ ENV/
 
 # IDE
 .idea/
+
+# Linux garbage file
+*~
