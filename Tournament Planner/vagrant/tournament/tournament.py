@@ -9,31 +9,59 @@ DBNAME = "tournament"
 
 def connect(dbname=DBNAME):
     """
-    Connect to the PostgreSQL database.  Returns a database connection.
+    Connect to the PostgreSQL database.
+    :returns: a database connection.
     """
-    return psycopg2.connect("dbname=" + dbname)
+    try:
+        return psycopg2.connect("dbname=" + DBNAME)
+    except:
+        print("Connection failed")
+
+
+def fetch_data(SQL, data=None):
+    """
+    :param SQL: The SQL query to fetch data
+    :return:
+    """
+    db = connect()
+    c = db.cursor()
+    if data == None:
+        c.execute(SQL)
+    else:
+        c.execute(SQL, data)
+    result = c.fetchall()
+    db.close()
+    return result
+
+
+
+def commit_data(SQL, data=None):
+    """
+    :param SQL: The SQL query to commit
+    :return:
+    """
+    db = connect()
+    c = db.cursor()
+    if data == None:
+        c.execute(SQL)
+    else:
+        c.execute(SQL, data)
+    db.commit()
+    db.close()
 
 
 def deleteMatches():
     """
     Remove all the match records from the database.
     """
-    db = connect()
-    c = db.cursor()
-    c.execute("DELETE FROM matches;")
-    db.commit()
-    db.close()
+    commit_data("DELETE FROM matches;")
 
 
 def deletePlayers():
     """
     Remove all the player records from the database.
     """
-    db = connect()
-    c = db.cursor()
-    c.execute("DELETE FROM players;")
-    db.commit()
-    db.close()
+    commit_data("DELETE FROM players;")
 
 
 def countPlayers():
@@ -41,11 +69,7 @@ def countPlayers():
     Returns the number of players currently registered.
     """
     query = "SELECT COUNT(id) from players;"
-    db = connect()
-    c = db.cursor()
-    c.execute(query)
-    result = c.fetchall()
-    db.close()
+    result = fetch_data(query)
     return int(result[0][0]) # as result is in the format [(0L,)]
 
 
@@ -60,11 +84,8 @@ def registerPlayer(name):
       name: the player's full name (need not be unique).
     """
     query = "INSERT INTO players (name) VALUES (%s)"
-    db = connect()
-    c = db.cursor()
-    c.execute(query, (name,))
-    db.commit()
-    db.close()
+    data = (name,)
+    commit_data(query, data)
 
 
 def playerStandings():
@@ -87,15 +108,22 @@ def playerStandings():
     losers_query = "select players.id, count(matches.id) as losses from players left join matches on " \
                    "players.id = loser_id group by players.id order by losses desc"
 
-    join_query = "select winners.id, winners.name, wins, wins+losses as matches from ({winners_query}) as winners " \
-                 "left join ({losers_query}) as losers on winners.id = losers.id;".format(winners_query=winners_query,
-                                                                                losers_query=losers_query)
-    db = connect()
-    c = db.cursor()
-    c.execute(join_query)
-    results = c.fetchall()
-    db.close()
-    return results
+    join_query = "select winners.id, winners.name, wins, wins+losses as matches from ({winners_query}) as winners left " \
+                 "join ({losers_query}) as losers on winners.id = losers.id;".format(
+        winners_query=winners_query, losers_query=losers_query)
+
+    # I attempted to solve the possible SQL inject here but since there is no input used from user SQL injection is
+    # not possible. Please correct me if I am wrong.
+    # join_query = "select winners.id, winners.name, wins, wins+losses as matches from (%s) as winners left join (%s) " \
+    #              "as losers on winners.id = losers.id;"
+    # data = (winners_query, losers_query)
+    # db = connect()
+    # c = db.cursor()
+    # c.execute(join_query, data)
+    # results = c.fetchall()
+    # db.close()
+
+    return fetch_data(join_query)
 
 
 def reportMatch(winner, loser):
@@ -106,13 +134,10 @@ def reportMatch(winner, loser):
       winner:  the id number of the player who won
       loser:  the id number of the player who lost
     """
-    query = "insert into matches (winner_id, loser_id) values ({winner_id}, {loser_id})".format(
-        winner_id=winner, loser_id=loser)
-    db = connect()
-    c = db.cursor()
-    c.execute(query)
-    db.commit()
-    db.close()
+    query = "insert into matches (winner_id, loser_id) values ((%s), (%s))"
+    data = (winner,loser)
+    commit_data(query, data)
+
 
 def swissPairings():
     """
