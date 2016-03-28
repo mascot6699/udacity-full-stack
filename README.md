@@ -4,8 +4,9 @@ Project work for the Udacity Full-Stack Web Developer Nanodegree
 # Full-Stack Web Developer Nanodegree
 
 ## Projects:
-- **project 1**: Movie Trailer Website
-- **project 2**: Tournament Planner
+- **Project 1**: Movie Trailer Website
+- **Project 2**: Tournament Planner
+- **Project 3**: Item Catalog
 
 ## Courses:
 - Programming Foundations with Python

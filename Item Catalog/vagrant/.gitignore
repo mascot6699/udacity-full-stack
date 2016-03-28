@@ -1,0 +1,5 @@
+# No vagrant files please
+.vagrant
+
+# No trash file too
+*~
