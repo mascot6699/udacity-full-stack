@@ -31,6 +31,7 @@ class Puppy(Base):
     """
     __tablename__ = "puppy"
 
+    id = Column(Integer, primary_key=True)
     name = Column(String(100), nullable=False)
     dob = Column(Date)
     gender = Column(String(6))
