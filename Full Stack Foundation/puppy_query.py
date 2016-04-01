@@ -72,8 +72,6 @@ def puppies_with_shelter():
             print(puppy.name)
 
 
-
-
 def main():
     """
     main subroutine
