@@ -15,8 +15,18 @@ class WebServerHandler(BaseHTTPRequestHandler):
             self.wfile.write(message)
             print message
             return
+
+        if self.path.endswith("/hola/"):
+            self.send_response(200)
+            self.send_header('Content-type', 'text/html')
+            self.end_headers()
+            message = ""
+            message += "<html><body> &#161 Hola ! </body></html>"
+            self.wfile.write(message)
+            print message
+            return
         else:
-            self.send_error(404, 'File Not Found: %s. Try hitting /umang/' % self.path)
+            self.send_error(404, 'File Not Found: %s. Try hitting /umang/ or /hola/' % self.path)
 
 
 def main():
