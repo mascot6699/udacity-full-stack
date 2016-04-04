@@ -9,8 +9,9 @@ def get_restaurant_list_template():
     message = "<html><body>"
     for restaurant in restaurants:
         message += restaurant.name
-        message += "<a href ='#' >Edit </a> "
         message += "</br>"
-        message += "<a href ='#'> Delete </a>"
+        message += "<a href ='#'>Edit</a>   "
+        message += "<a href ='#'>Delete</a>"
         message += "</br></br></br>"
     message += "</body></html>"
+    return message
