@@ -13,3 +13,12 @@ def get_restaurants():
     :return: a list of restaurants objects
     """
     return session.query(Restaurant).all()
+
+def create_restaurant(name):
+    """
+
+    :return:
+    """
+    new_restaurant = Restaurant(name=name)
+    session.add(new_restaurant)
+    session.commit()
