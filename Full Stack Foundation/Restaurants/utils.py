@@ -14,6 +14,7 @@ def get_restaurants():
     """
     return session.query(Restaurant).all()
 
+
 def create_restaurant(name):
     """
 
@@ -22,3 +23,11 @@ def create_restaurant(name):
     new_restaurant = Restaurant(name=name)
     session.add(new_restaurant)
     session.commit()
+
+
+def get_restaurant_by_id(id):
+    """
+    :return:
+    """
+    restaurant = session.query(Restaurant).filter_by(id=id).one()
+    return restaurant
