@@ -30,3 +30,19 @@ def get_create_new_restaurant_form():
     message += "<input type='submit' value='Create'>"
     message += "</form></body></html>"
     return message
+
+
+def get_edit_restaurant_form(id):
+    """
+    :return:
+    """
+    restaurant = utils.get_restaurant_by_id(id)
+    message = "<html><body>"
+    message += "<h1>"
+    message += restaurant.name
+    message += "</h1>"
+    message += "<form method='POST' enctype='multipart/form-data' action = '/restaurants/%s/edit' >" % restaurant.id
+    message += "<input name = 'name' type='text' placeholder = '%s' >" % restaurant.name
+    message += "<input type = 'submit' value = 'Rename'>"
+    message += "</form>"
+    message += "</body></html>"
