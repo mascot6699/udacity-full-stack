@@ -12,7 +12,7 @@ def get_restaurant_list_template():
     for restaurant in restaurants:
         message += restaurant.name
         message += "</br>"
-        message += "<a href ='#'>Edit</a>   "
+        message += "<a href ='/restaurants/%s/edit'>Edit</a>   " % restaurant.id
         message += "<a href ='#'>Delete</a>"
         message += "</br></br></br>"
     message += "</body></html>"
@@ -46,3 +46,4 @@ def get_edit_restaurant_form(id):
     message += "<input type = 'submit' value = 'Rename'>"
     message += "</form>"
     message += "</body></html>"
+    return message
