@@ -8,13 +8,6 @@ import views, utils
 
 class WebServerHandler(BaseHTTPRequestHandler):
 
-    form = '''<form method='POST' enctype='multipart/form-data' action='/umang/'>
-              <h2>What would you like me to say?</h2>
-              <input name="message" type="text" >
-              <input type="submit" value="Submit">
-              </form>
-           '''
-
     def do_GET(self):
         if self.path.endswith("/restaurants"):
             self.send_response(200)
@@ -31,6 +24,15 @@ class WebServerHandler(BaseHTTPRequestHandler):
             message = views.get_create_new_restaurant_form()
             self.wfile.write(message)
             return
+        
+        if self.path.endswith("/edit"):
+            id = self.path.split("/")[2]
+            if type(id) == int:
+                self.send_response(200)
+                self.send_header('Content-type', 'text/html')
+                self.end_headers()
+                message = views.get_edit_restaurant_form(id)
+                self.wfile.write(message)
         else:
             self.send_error(404, 'File Not Found: %s. Try hitting /restaurants' % self.path)
 
