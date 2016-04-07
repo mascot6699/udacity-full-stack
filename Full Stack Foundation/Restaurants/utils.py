@@ -31,3 +31,15 @@ def get_restaurant_by_id(id):
     """
     restaurant = session.query(Restaurant).filter_by(id=id).one()
     return restaurant
+
+
+def rename_restaurant(id, name):
+    """
+
+    :return:
+    """
+    restaurant = session.query(Restaurant).filter_by(id=id).one()
+    if restaurant != []:
+        restaurant.name = name
+        session.add(restaurant)
+        session.commit()

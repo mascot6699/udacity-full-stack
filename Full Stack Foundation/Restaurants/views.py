@@ -42,7 +42,7 @@ def get_edit_restaurant_form(id):
     message += restaurant.name
     message += "</h1>"
     message += "<form method='POST' enctype='multipart/form-data' action = '/restaurants/%s/edit' >" % restaurant.id
-    message += "<input name = 'name' type='text' placeholder = '%s' >" % restaurant.name
+    message += "<input name = 'name' type='text' value = '%s' >" % restaurant.name
     message += "<input type = 'submit' value = 'Rename'>"
     message += "</form>"
     message += "</body></html>"
