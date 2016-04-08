@@ -43,3 +43,13 @@ def rename_restaurant(id, name):
         restaurant.name = name
         session.add(restaurant)
         session.commit()
+
+
+def delete_restaurant_by_id(id):
+    """
+    :return:
+    """
+    restaurant = get_restaurant_by_id(id)
+    if restaurant:
+        session.delete(restaurant)
+        session.commit()

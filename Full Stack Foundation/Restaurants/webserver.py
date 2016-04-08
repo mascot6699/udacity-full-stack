@@ -42,7 +42,7 @@ class WebServerHandler(BaseHTTPRequestHandler):
             message = views.get_delete_restaurant_form(id)
             self.wfile.write(message)
             return
-        
+
         else:
             self.send_error(404, 'File Not Found: %s. Try hitting /restaurants' % self.path)
 
@@ -59,18 +59,24 @@ class WebServerHandler(BaseHTTPRequestHandler):
                 self.end_headers()
 
         if self.path.endswith("/edit"):
-                ctype, pdict = cgi.parse_header(
-                    self.headers.getheader('content-type'))
-                if ctype == 'multipart/form-data':
-                    fields = cgi.parse_multipart(self.rfile, pdict)
-                    messagecontent = fields.get('name')
-                    id = self.path.split("/")[2]
-                    utils.rename_restaurant(id, messagecontent[0])
-                    self.send_response(301)
-                    self.send_header('Content-type', 'text/html')
-                    self.send_header('Location', '/restaurants')
-                    self.end_headers()
-
+            ctype, pdict = cgi.parse_header(self.headers.getheader('content-type'))
+            if ctype == 'multipart/form-data':
+                fields = cgi.parse_multipart(self.rfile, pdict)
+                messagecontent = fields.get('name')
+                id = self.path.split("/")[2]
+                utils.rename_restaurant(id, messagecontent[0])
+                self.send_response(301)
+                self.send_header('Content-type', 'text/html')
+                self.send_header('Location', '/restaurants')
+                self.end_headers()
+                
+        if self.path.endswith("/delete"):
+            id = self.path.split("/")[2]
+            utils.delete_restaurant_by_id(id)
+            self.send_response(301)
+            self.send_header('Content-type', 'text/html')
+            self.send_header('Location', '/restaurants')
+            self.end_headers()
 
 def main():
     try:

@@ -56,7 +56,7 @@ def get_delete_restaurant_form(id):
     restaurant = utils.get_restaurant_by_id(id)
     message = ""
     message += "<html><body>"
-    message += "<h1>Are you sure you want to delete %s?" % restaurant.name
+    message += "<h4>Are you sure you want to delete %s? </h4>" % restaurant.name
     message += "<form method='POST' enctype = 'multipart/form-data' action = '/restaurants/%s/delete'>" % id
     message += "<input type = 'submit' value = 'Delete'>"
     message += "</form>"
