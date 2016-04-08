@@ -32,6 +32,17 @@ class WebServerHandler(BaseHTTPRequestHandler):
             self.end_headers()
             message = views.get_edit_restaurant_form(id)
             self.wfile.write(message)
+            return
+
+        if self.path.endswith("/delete"):
+            id = self.path.split("/")[2]
+            self.send_response(200)
+            self.send_header('Content-type', 'text/html')
+            self.end_headers()
+            message = views.get_delete_restaurant_form(id)
+            self.wfile.write(message)
+            return
+        
         else:
             self.send_error(404, 'File Not Found: %s. Try hitting /restaurants' % self.path)
 
