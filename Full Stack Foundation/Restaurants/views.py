@@ -13,7 +13,7 @@ def get_restaurant_list_template():
         message += restaurant.name
         message += "</br>"
         message += "<a href ='/restaurants/%s/edit'>Edit</a>   " % restaurant.id
-        message += "<a href ='#'>Delete</a>"
+        message += "<a href ='/restaurants/%s/delete'>Delete</a>" % restaurant.id
         message += "</br></br></br>"
     message += "</body></html>"
     return message
