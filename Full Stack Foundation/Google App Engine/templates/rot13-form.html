@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block header %}
+    <div style="text-align:center">
+        Rot13 Implementation
+    </div>
+{% endblock %}
+
+{% block content %}
+<form method="post" style="text-align:center">
+    <textarea name="text" style="height: 150px; width: 400px;">{{text}}</textarea>
+    <br>
+    <input type="submit">
+</form>
+{% endblock %}

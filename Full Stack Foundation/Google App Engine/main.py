@@ -21,11 +21,12 @@ import jinja2
 
 
 template_dir = os.path.join(os.path.dirname(__file__), 'templates')
-jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_dir), autoescape=True)
+jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_dir), autoescape=True) # Don't forget to autoescape
+
 
 class Handler(webapp2.RequestHandler):
     """
-    Jinja template handler
+    Jinja request handler base class
     """
     def write(self, *a, **kw):
         self.response.write(*a, **kw)
@@ -37,9 +38,10 @@ class Handler(webapp2.RequestHandler):
     def render(self, template, **kw):
         self.write(self.render_str(template, **kw))
 
-class MainHandler(Handler):
+
+class ShoppingListHandler(Handler):
     """
-    Contains form for submission
+    Shopping list handler
     """
     def get(self):
         """
@@ -49,6 +51,24 @@ class MainHandler(Handler):
         self.render("shopping_list.html", items=items)
 
 
+class Rot13Handler(Handler):
+    """
+    Rotation by 13 ceaser cipher implemented
+    """
+
+    def get(self):
+        self.render('rot13-form.html')
+
+    def post(self):
+        rot13 = ''
+        text = self.request.get('text')
+        if text:
+            rot13 = text.encode('rot13')
+
+        self.render('rot13-form.html', text = rot13)
+
+
 app = webapp2.WSGIApplication(
-    [('/', MainHandler),
+    [('/shopping/list/', ShoppingListHandler),
+     ('/rot13/', Rot13Handler),
     ], debug=True)

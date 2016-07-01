@@ -1,14 +1,26 @@
+<!DOCTYPE html>
 <html>
 	<head>
 		<title>
-			Learning templates
+			Learning Google App Engine
 		</title>
+		<style>
+		.container {
+		    display: block;
+		    margin-left: auto;
+		    margin-right: auto;
+		    width: 40%;
+		}
+		</style>
 	</head>
 	<body>
-		<H1>
-			Notes app
-		</H1>
-		{% block content %}
-		{% endblock %}
+		<div class="container">
+			<h1>
+				{% block header %}
+				{% endblock %}
+			</h1>
+			{% block content %}
+			{% endblock %}
+		</div>
 	</body>
 </html>
