@@ -19,6 +19,7 @@ import os
 import webapp2
 import jinja2
 
+import utils
 
 template_dir = os.path.join(os.path.dirname(__file__), 'templates')
 jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_dir), autoescape=True) # Don't forget to autoescape
@@ -68,7 +69,22 @@ class Rot13Handler(Handler):
         self.render('rot13-form.html', text = rot13)
 
 
+class WelcomePage(Handler):
+    """
+    """
+    def get(self):
+        """
+        Welcome a valid user or redirect to signup page
+        """
+        username = self.request.get('username')
+        if utils.valid_username(username):
+            self.render('welcome.html', username=username)
+        else:
+            self.redirect('/signup')
+
+
 app = webapp2.WSGIApplication(
     [('/shopping/list/', ShoppingListHandler),
      ('/rot13/', Rot13Handler),
+     ('/welcome/', WelcomePage)
     ], debug=True)
