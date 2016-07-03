@@ -14,3 +14,9 @@
 
 1. This project has the following objectives
 ![Image of Objectives](/objectives.png)
+
+### Google App Engine
+
+1. Shopping list [link](http://multi-user-blog-1365.appspot.com/shopping/list/)
+2. Rot13 assignment [link](http://multi-user-blog-1365.appspot.com/rot13/)
+3. User signup assignment [link](http://multi-user-blog-1365.appspot.com/signup/)
