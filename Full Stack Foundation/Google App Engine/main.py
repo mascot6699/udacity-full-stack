@@ -121,8 +121,19 @@ class Signup(Handler):
             self.redirect('/welcome/?username=' + username)
 
 
+class IndexPageHandler(Handler):
+    """
+    """
+    def get(self):
+        """
+        Landing or Index page handler
+        """
+        self.render('index.html')
+
+
 app = webapp2.WSGIApplication(
-    [('/shopping/list/', ShoppingListHandler),
+    [('/', IndexPageHandler),
+     ('/shopping/list/', ShoppingListHandler),
      ('/rot13/', Rot13Handler),
      ('/welcome/', WelcomePage),
      ('/signup/', Signup),
