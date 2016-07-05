@@ -1,26 +1,21 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<title>
-			Learning Google App Engine
-		</title>
-		<style>
-		.container {
-		    display: block;
-		    margin-left: auto;
-		    margin-right: auto;
-		    width: 40%;
-		}
-		</style>
-	</head>
-	<body>
-		<div class="container">
-			<h1>
-				{% block header %}
-				{% endblock %}
-			</h1>
-			{% block content %}
+<head>
+	<link type="text/css" rel="stylesheet" href="/static/css/index.css"/>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+	<link  rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css">
+	<title>
+		Learning Google App Engine
+	</title>
+</head>
+<body>
+	<div class="container">
+		<h1>
+			{% block header %}
 			{% endblock %}
-		</div>
-	</body>
+		</h1>
+		{% block content %}
+		{% endblock %}
+	</div>
+</body>
 </html>
