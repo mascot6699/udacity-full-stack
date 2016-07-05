@@ -1,3 +1,25 @@
 #cs253:hover {
     color: orange;
  }
+
+.post-date {
+    font-size: 14px;
+    font-weight: normal;
+    float: right;
+    color: #999;
+}
+
+.all-post {
+    font-size: 14px;
+    font-weight: normal;
+    float: left;
+}
+
+pre.wrap {
+	word-break: break-all; /* webkit */
+	word-wrap: break-word;
+	white-space: pre;
+	white-space: -moz-pre-wrap; /* fennec */
+	white-space: pre-wrap;
+	white-space: pre\9; /* IE7+ */
+}

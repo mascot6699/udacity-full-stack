@@ -50,6 +50,16 @@ class Art(db.Model):
     created = db.DateTimeProperty(auto_now_add=True)
 
 
+class Post(db.Model):
+    """
+    Blog post entity.
+    """
+    subject = db.StringProperty(required=True)
+    content = db.TextProperty(required=True)
+    created_at = db.DateTimeProperty(auto_now_add=True)
+    modified_at = db.DateTimeProperty(auto_now=True)
+
+
 class ShoppingListHandler(Handler):
     """
     Shopping list handler
@@ -166,6 +176,45 @@ class AsciiForumHandler(Handler):
             self.render_ascii(title, art, error)
 
 
+class NewBlogHandler(Handler):
+    """
+    New blog post add
+    """
+    def render_newpost(self, subject="", content="", error=""):
+        self.render('new-blog.html', subject=subject, content=content,
+                    error=error)
+
+    def get(self):
+        self.render_newpost()
+
+    def post(self):
+        subject = self.request.get('subject')
+        content = self.request.get('content')
+
+        if subject and content:
+            p = Post(subject=subject, content=content)
+            p.put()
+            post_id = str(p.key().id())
+            self.redirect('/blog/%s' % post_id)
+        else:
+            error = "Please add both a title and a post!"
+            self.render_newpost(subject, content, error)
+
+
+class Permalink(Handler):
+    """
+    Blog post permalink.
+    """
+    def get(self, post_id):
+        post = Post.get_by_id(int(post_id))
+
+        if not post:
+            self.error(404)
+            return
+        self.render('permalink.html', post=post)
+
+
+
 app = webapp2.WSGIApplication(
     [('/', IndexPageHandler),
      ('/ascii/', AsciiForumHandler),
@@ -173,4 +222,7 @@ app = webapp2.WSGIApplication(
      ('/rot13/', Rot13Handler),
      ('/welcome/', WelcomePage),
      ('/signup/', Signup),
+     ('/blog/add/', NewBlogHandler),
+     ('/blog/([0-9]+)', Permalink),
+     # ('/blog/?(?:\.json)?', Blog),
     ], debug=True)
