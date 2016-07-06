@@ -5,8 +5,8 @@
 .post-date {
     font-size: 14px;
     font-weight: normal;
-    float: right;
     color: #999;
+    margin-top: 1.5%;
 }
 
 .all-post {
@@ -15,11 +15,27 @@
     float: left;
 }
 
-pre.wrap {
-	word-break: break-all; /* webkit */
-	word-wrap: break-word;
-	white-space: pre;
-	white-space: -moz-pre-wrap; /* fennec */
-	white-space: pre-wrap;
-	white-space: pre\9; /* IE7+ */
+.pre {
+    font-weight: 400;
+    font-style: normal;
+    font-size: 21px;
+    line-height: 1.58;
+    letter-spacing: -.003em;
+}
+
+.post-title { 
+	font-weight: 700;
+    font-style: normal;
+    font-size: 36px;
+    line-height: 1.15;
+    letter-spacing: -.02em;
+}
+
+.post-headers {
+    margin-left: 2%;
+}
+
+.headers {
+    font-size: 42px;
+    font-weight: 900;
 }

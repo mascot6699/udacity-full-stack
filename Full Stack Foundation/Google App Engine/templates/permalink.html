@@ -2,14 +2,15 @@
 
 
 {% block header %}
-<div style="text-align:center">
-    <a href="/blog/{{post.key().id()}}">{{post.subject}}</a>
+<a href="/blog" class="all-post"><i class="fa fa-arrow-left"></i> All Posts</a>
+<br>
+<div class="post-headers">
+    <a class="post-title" href="/blog/{{post.key().id()}}">{{post.subject}}</a>
     <div class="post-date">{{post.created_at.strftime('%b %d, %Y')}}</div>
-    <a href="/blog" class="all-post">All Post</a>
 </div>
 {% endblock %}
 
 {% block content %}
 	<br>
-    <pre class="wrap">{{post.content}}</pre>
+    <div class="pre">{{ post.content | safe}}</div>
 {% endblock %}
