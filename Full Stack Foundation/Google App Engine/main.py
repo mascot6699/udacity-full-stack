@@ -189,7 +189,7 @@ class NewBlogHandler(Handler):
 
     def post(self):
         subject = self.request.get('subject')
-        content = self.request.get('content')
+        content = self.request.get('content').replace('\n', '<br>')
 
         if subject and content:
             p = Post(subject=subject, content=content)
@@ -214,6 +214,14 @@ class Permalink(Handler):
         self.render('permalink.html', post=post)
 
 
+class BlogListHandler(Handler):
+    """
+    Blog list page.
+    """
+    def get(self):
+        posts = db.GqlQuery("SELECT * FROM Post ORDER BY created_at DESC LIMIT 10")
+        self.render('blog.html', posts=posts)
+
 
 app = webapp2.WSGIApplication(
     [('/', IndexPageHandler),
@@ -224,5 +232,5 @@ app = webapp2.WSGIApplication(
      ('/signup/', Signup),
      ('/blog/add/', NewBlogHandler),
      ('/blog/([0-9]+)', Permalink),
-     # ('/blog/?(?:\.json)?', Blog),
+     ('/blog', BlogListHandler),
     ], debug=True)
