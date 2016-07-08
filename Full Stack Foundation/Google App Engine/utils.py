@@ -1,4 +1,7 @@
 import re
+import random
+import hashlib
+import hmac
 from string import letters
 
 USER_REGEX = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")
@@ -38,3 +41,25 @@ def check_secure_key(secure_key):
     key = secure_key.split('|')[0]
     if secure_val == make_secure_val(val):
         return val
+
+def make_salt(size=5):
+    """
+    Generate a salt of size given
+    """
+    return ''.join(random.choice(letters) for x in xrange(size))
+
+def make_pw_hash(username, pw, salt=None):
+    """
+    Returns hashed password
+    """
+    if not salt:
+        salt = make_salt()
+    h = hashlib.sha256(username + pw + salt).hexdigest()
+    return '%s,%s' % (salt, h)
+
+def valid_pw(username, password, h):
+    """
+    Validates hashed password
+    """
+    salt = h.split(',')[0]
+    return h == make_pw_hash(username, password, salt)
