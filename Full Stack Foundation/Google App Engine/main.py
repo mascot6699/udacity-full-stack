@@ -195,7 +195,7 @@ class NewBlogHandler(Handler):
             p = Post(subject=subject, content=content)
             p.put()
             post_id = str(p.key().id())
-            self.redirect('/blog/%s' % post_id)
+            self.redirect('/blog/%s/' % post_id)
         else:
             error = "Please add both a title and a post!"
             self.render_newpost(subject, content, error)
@@ -231,6 +231,6 @@ app = webapp2.WSGIApplication(
      ('/welcome/', WelcomePage),
      ('/signup/', Signup),
      ('/blog/add/', NewBlogHandler),
-     ('/blog/([0-9]+)', Permalink),
-     ('/blog', BlogListHandler),
+     ('/blog/([0-9]+)/', Permalink),
+     ('/blog/', BlogListHandler),
     ], debug=True)
