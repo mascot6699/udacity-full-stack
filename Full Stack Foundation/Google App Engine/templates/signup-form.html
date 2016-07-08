@@ -1,11 +1,8 @@
 {% extends "base.html" %}
 
 {% block header %}
-    <!-- <div style="text-align:center"> -->
-      Signup
-    <!-- </div> -->
+Signup
 {% endblock %}
-
 
 
 {% block content %}
@@ -13,34 +10,39 @@
   .label {text-align: right}
   .error {color: red}
 </style>
-
-<form method="post">
-  <table>
-    <tr>
-      <td class="label">Username</td>
-      <td><input type="text" name="username" value="{{username}}"></td>
-      <td class="error">{{error_username}}</td>
-    </tr>
-
-    <tr>
-      <td class="label"> Password </td>
-      <td> <input type="password" name="password" value=""> </td>
-      <td class="error"> {{error_password}} </td>
-    </tr>
-
-    <tr>
-      <td class="label"> Verify Password </td>
-      <td> <input type="password" name="verify" value=""> </td>
-      <td class="error"> {{error_verify}} </td>
-    </tr>
-
-    <tr>
-      <td class="label"> Email (optional) </td>
-      <td> <input type="text" name="email" value="{{email}}"> </td>
-      <td class="error"> {{error_email}} </td>
-    </tr>
-  </table>
-
-  <input type="submit">
-</form>
+<div class="signup-container">
+  <form method="post" role="form" class="form-vertical">
+    <div class="form-group">
+      <label class="col-md-6">Username*</label>
+      <input required class="form-control col-md-6" type="text" name="username" value="{{username}}">
+      {% if error_username %}
+      <span class="text-danger">{{error_username}}</span>
+      {% endif %}
+    </div>
+    <div class="form-group">
+      <label class="col-md-6">Password*</label>
+      <input required class="form-control col-md-6" type="password" name="password" value="">
+      {% if error_username %}
+      <span class="text-danger">{{error_password}}</span>
+      {% endif %}
+    </div>    
+    <div class="form-group">
+      <label class="col-md-6">Verify Password*</label>
+      <input required class="form-control col-md-6" type="password" name="verify" value="">
+      {% if error_username %}
+      <span class="text-danger">{{error_verify}}</span>
+      {% endif %}
+    </div>    
+    <div class="form-group">
+      <label class="col-md-6">Email</label>
+      <input class="form-control col-md-6" type="text" name="email" value="{{email}}">
+      {% if error_username %}
+      <span class="text-danger">{{error_email}}</span>
+      {% endif %}
+    </div>
+    <div class="form-group">
+      <input class="form-control col-md-6 btn btn-default" type="submit"></input>
+    </div>
+  </form>
+</div>
 {% endblock %}
