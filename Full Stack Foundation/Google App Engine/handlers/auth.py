@@ -1,6 +1,47 @@
 from .base import Handler
 import utils
 
+class AuthHandler(Handler):
+    """
+    Adds common utility methods needed for authentication
+    """
+
+    def set_secure_cookie(self, name, val):
+        """
+        Store a cookie after hashing
+        """
+        cookie_val = utils.make_secure_val(val)
+        self.response.headers.add_header(
+            'Set-Cookie','%s=%s; Path=/' % (name, cookie_val))
+
+    def read_secure_cookie(self, name):
+        """
+        Read a cookie and return if valid"
+        """
+        cookie_val = self.request.cookies.get(name)
+        return cookie_val and utils.check_secure_val(cookie_val)
+
+    def login(self, user):
+        """
+        Adds the user_id cookie to login user
+        """
+        self.set_secure_cookie('user_id', str(user.key().id()))
+
+    def logout(self):
+        """
+        Removes the user_id cookie value to logout user
+        """
+        self.response.headers.add_header('Set-Cookie', 'user_id=; Path=/')
+
+    def initialize(self, *a, **kw):
+        """
+        Auth middleware to set self.user if set in cookie
+        """
+        Handler.initialize(self, *a, **kw)
+        uid = self.read_secure_cookie('user_id')
+        if User.get_by_id(uid(int(uid)):
+            self.user = uid 
+
 
 class WelcomePage(Handler):
     """
