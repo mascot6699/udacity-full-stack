@@ -3,7 +3,7 @@
 import webapp2
 
 from handlers.ascii import AsciiForumHandler
-from handlers.auth import WelcomePage, MockSignup, DatabaseSignup
+from handlers.auth import WelcomePage, MockSignup, DatabaseSignup, LoginHandler, LogoutHandler
 from handlers.blogs import BlogListHandler, NewBlogHandler, Permalink
 from handlers.index import IndexPageHandler
 from handlers.rot13 import Rot13Handler
@@ -17,6 +17,8 @@ app = webapp2.WSGIApplication([
     ('/blog/([0-9]+)/', Permalink),
     ('/blog/add/', NewBlogHandler),
     ('/rot13/', Rot13Handler),
+    ('/login/', LoginHandler),
+    ('/logout/', LogoutHandler),
     ('/mock/signup/', MockSignup),
     ('/database/signup/', DatabaseSignup),
     ('/shopping/list/', ShoppingListHandler),

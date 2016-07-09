@@ -55,5 +55,5 @@ class User(db.Model):
         Returns a user instance if user and password match
         """
         u = cls.by_name(username)
-        if u and valid_pw(username, pw, u.pw_hash):
+        if u and utils.valid_pw(username, pw, u.pw_hash):
             return u

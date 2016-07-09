@@ -41,7 +41,9 @@ class AuthHandler(Handler):
         Handler.initialize(self, *a, **kw)
         uid = self.read_secure_cookie('user_id')
         if uid and User.get_by_id(int(uid)):
-            self.user = uid 
+            self.user = uid
+        else:
+            self.user = None
 
 
 class WelcomePage(Handler):
@@ -55,7 +57,7 @@ class WelcomePage(Handler):
         if utils.valid_username(username):
             self.render('welcome.html', username=username)
         else:
-            self.redirect('/signup/')
+            self.redirect('/mock/signup/')
 
 
 class Signup(AuthHandler):
@@ -64,7 +66,10 @@ class Signup(AuthHandler):
         """
         Render signup page
         """
-        self.render("signup-form.html")
+        if not self.user:
+            self.render("signup-form.html")
+        else:
+            self.redirect('/blog/')
 
     def post(self):
         """
@@ -127,3 +132,38 @@ class DatabaseSignup(Signup):
             u.put()
             self.login(u)
             self.redirect('/blog/')
+
+
+class LogoutHandler(AuthHandler):
+    """
+    Logs out the user
+    """
+    def get(self):
+        self.logout()
+        self.redirect('/blog/')
+
+
+class LoginHandler(AuthHandler):
+    """
+    Logs in user
+    """
+    def get(self):
+        """
+        Shows login form if not logged in
+        """
+        if not self.user:
+            self.render('login-form.html')
+        else:
+            self.redirect('/blog/')
+
+    def post(self):
+        username = self.request.get('username')
+        password = self.request.get('password')
+
+        u = User.login(username, password)
+        if u:
+            self.login(u)
+            self.redirect('/blog/')
+        else:
+            msg = 'Invalid login'
+            self.render('login-form.html', error=msg)
