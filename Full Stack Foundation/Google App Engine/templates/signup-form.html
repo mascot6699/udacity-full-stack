@@ -22,21 +22,21 @@ Signup
     <div class="form-group">
       <label class="col-md-6">Password*</label>
       <input required class="form-control col-md-6" type="password" name="password" value="">
-      {% if error_username %}
+      {% if error_password %}
       <span class="text-danger">{{error_password}}</span>
       {% endif %}
     </div>    
     <div class="form-group">
       <label class="col-md-6">Verify Password*</label>
       <input required class="form-control col-md-6" type="password" name="verify" value="">
-      {% if error_username %}
+      {% if error_verify %}
       <span class="text-danger">{{error_verify}}</span>
       {% endif %}
     </div>    
     <div class="form-group">
       <label class="col-md-6">Email</label>
       <input class="form-control col-md-6" type="text" name="email" value="{{email}}">
-      {% if error_username %}
+      {% if error_email %}
       <span class="text-danger">{{error_email}}</span>
       {% endif %}
     </div>

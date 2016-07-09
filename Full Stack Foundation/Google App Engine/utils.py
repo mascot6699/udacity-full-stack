@@ -39,8 +39,8 @@ def check_secure_key(secure_key):
     :returns: None if it does not match
     """
     key = secure_key.split('|')[0]
-    if secure_val == make_secure_val(val):
-        return val
+    if secure_key == make_secure_key(key):
+        return key
 
 def make_salt(size=5):
     """

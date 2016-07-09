@@ -3,7 +3,7 @@ Contains all enities used for the project
 """
 
 from google.appengine.ext import db
-
+import utils
 
 class Art(db.Model):
     """
@@ -38,7 +38,7 @@ class User(db.Model):
         """
         Finds a user by username
         """
-        user = User.all().filter('username=', username).get()
+        user = User.all().filter('username =', username).get()
         return user
 
     @classmethod
@@ -46,7 +46,7 @@ class User(db.Model):
         """
         Converts password to hashed password and initiates an instance
         """
-        pw_hash = make_pw_hash(username, pw)
+        pw_hash = utils.make_pw_hash(username, pw)
         return User(username=username, pw_hash=pw_hash, email=email)
 
     @classmethod

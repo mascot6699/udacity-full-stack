@@ -1,4 +1,5 @@
 from .base import Handler
+from entities.entity import User
 import utils
 
 class AuthHandler(Handler):
@@ -6,11 +7,11 @@ class AuthHandler(Handler):
     Adds common utility methods needed for authentication
     """
 
-    def set_secure_cookie(self, name, val):
+    def set_secure_cookie(self, name, key):
         """
         Store a cookie after hashing
         """
-        cookie_val = utils.make_secure_val(val)
+        cookie_val = utils.make_secure_key(key)
         self.response.headers.add_header(
             'Set-Cookie','%s=%s; Path=/' % (name, cookie_val))
 
@@ -19,7 +20,7 @@ class AuthHandler(Handler):
         Read a cookie and return if valid"
         """
         cookie_val = self.request.cookies.get(name)
-        return cookie_val and utils.check_secure_val(cookie_val)
+        return cookie_val and utils.check_secure_key(cookie_val)
 
     def login(self, user):
         """
@@ -39,7 +40,7 @@ class AuthHandler(Handler):
         """
         Handler.initialize(self, *a, **kw)
         uid = self.read_secure_cookie('user_id')
-        if User.get_by_id(uid(int(uid)):
+        if uid and User.get_by_id(int(uid)):
             self.user = uid 
 
 
@@ -57,7 +58,7 @@ class WelcomePage(Handler):
             self.redirect('/signup/')
 
 
-class Signup(Handler):
+class Signup(AuthHandler):
 
     def get(self):
         """
@@ -71,25 +72,58 @@ class Signup(Handler):
         with error details
         """
         have_error = False
-        username = self.request.get('username')
-        password = self.request.get('password')
-        verify = self.request.get('verify')
-        email = self.request.get('email')
-        params = dict(username=username, email=email)
+        self.username = self.request.get('username')
+        self.password = self.request.get('password')
+        self.verify = self.request.get('verify')
+        self.email = self.request.get('email')
+        params = dict(username=self.username, email=self.email)
 
-        if not utils.valid_username(username):
+        if not utils.valid_username(self.username):
             params['error_username'] = "That's not a valid username."
             have_error = True
-        if not utils.valid_password(password):
+        if not utils.valid_password(self.password):
             params['error_password'] = "That wasn't a valid password."
             have_error = True
-        elif password != verify:
+        elif self.password != self.verify:
             params['error_verify'] = "Your passwords didn't match."
             have_error = True
-        if not utils.valid_email(email):
+        if not utils.valid_email(self.email):
             params['error_email'] = "That's not a valid email."
             have_error = True
         if have_error:
             self.render('signup-form.html', **params)
         else:
-            self.redirect('/welcome/?username=' + username)
+            self.done()
+
+    def done(self, *a, **kw):
+        raise NotImplementedError
+
+
+class MockSignup(Signup):
+    """
+    Basic signup
+    """
+    def done(self):
+        """
+        Passes the username via url
+        """
+        self.redirect('/welcome/?username=' + self.username)
+
+
+class DatabaseSignup(Signup):
+    """
+    Registers the user instance so that user can log back again
+    """
+    def done(self):
+        """
+        Saves an user instance if possible and redirects to login page
+        """
+        u = User.by_name(self.username)
+        if u:
+            msg = 'That user already exists.'
+            self.render('signup-form.html', error_username=msg)
+        else:
+            u = User.register(self.username, self.password, self.email)
+            u.put()
+            self.login(u)
+            self.redirect('/blog/')
