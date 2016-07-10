@@ -1,5 +1,12 @@
 {% extends "base.html" %}
 
+{% block nav %}
+    {% if username %}
+        User: {{ username }}<br>
+        <a href="/logout/"> Logout </a>
+    {% endif %}
+{% endblock %}
+
 {% block header %}
 <div class="headers text-center">
     <a href="/blog">Recent Blogs</a>
@@ -8,7 +15,6 @@
 {% endblock %}
 
 {% block content %}
-
     {% for post in posts %}
         <div class="post-headers">
             <a class="post-title" href="/blog/{{post.key().id()}}/">{{post.subject}}</a>

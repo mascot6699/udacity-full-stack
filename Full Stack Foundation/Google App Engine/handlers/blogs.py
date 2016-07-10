@@ -1,10 +1,10 @@
-from .base import Handler
-from entities.entity import Post
+from .auth import AuthHandler
+from entities.entity import Post, User
 
 from google.appengine.ext import db
 
 
-class NewBlogHandler(Handler):
+class NewBlogHandler(AuthHandler):
     """
     New blog post add
     """
@@ -29,7 +29,7 @@ class NewBlogHandler(Handler):
             self.render_newpost(subject, content, error)
 
 
-class Permalink(Handler):
+class Permalink(AuthHandler):
     """
     Blog post permalink.
     """
@@ -42,10 +42,14 @@ class Permalink(Handler):
         self.render('permalink.html', post=post)
 
 
-class BlogListHandler(Handler):
+class BlogListHandler(AuthHandler):
     """
     Blog list page.
     """
     def get(self):
         posts = db.GqlQuery("SELECT * FROM Post ORDER BY created_at DESC LIMIT 10")
-        self.render('blog.html', posts=posts)
+        if self.user:
+            user = User.get_by_id(int(self.user))
+            self.render('blog.html', posts=posts, username=user.username)
+        else:
+            self.render('blog.html', posts=posts)
