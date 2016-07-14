@@ -1,0 +1,40 @@
+<div class="navbar navbar-default navbar-fixed-top">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="/">
+        Barely speaking
+      </a>
+    </div>
+    <div class="collapse navbar-collapse">
+      <ul class="nav navbar-nav">
+        <li><a href="/allposts"><b>All Posts</b></a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li style="list-style: none">
+          {% if user %}
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><em>{{user.fullname}}</em><b class="caret"></b></a>
+            <ul class="dropdown-menu">
+              <li><a href="/post/add">New Post</a></li>
+              <li class="divider"></li>
+              <li><a href="/profile">Profile</a></li>
+              <li><a href="/logout">Sign Out</a></li>
+            </ul>
+          </li>
+          {% else %}
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><b>Welcome</b><b class="caret"></b></a>
+            <ul class="dropdown-menu">
+              <li><a href="/login" class="fa fa-sign-in"> Login</a></li>
+              <li><a href="/register" class="fa fa-user"> Signup</a></li>
+            </ul>
+          </li>
+          {% endif %} 
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+
