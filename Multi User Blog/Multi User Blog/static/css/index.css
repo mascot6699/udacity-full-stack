@@ -2,8 +2,14 @@
     font-size: 42px;
     font-weight: 900;
 }
-
 .height-adjust{
     margin-top: 4%;
+}
+.signup-container {
+    background-color: #fff;
+    border-radius: 3px;
+    box-shadow: 0 2px 6px 0 rgba(0,0,0,.44);
+    padding: 0;
+    max-width: 40%;
 }
 
