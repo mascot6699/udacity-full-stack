@@ -3,6 +3,9 @@ This file will contain all the entities required for Blog app
 """
 from google.appengine.ext import db
 
+import utils
+
+
 class User(db.Model):
     """
     Entity to store for User.
@@ -12,6 +15,31 @@ class User(db.Model):
     email = db.StringProperty()
     fullname = db.StringProperty()
     about = db.StringProperty()
+
+    @classmethod
+    def by_name(cls, username):
+        """
+        Finds a user by username
+        """
+        user = User.all().filter('username =', username).get()
+        return user
+
+    @classmethod
+    def register(cls, username, password, email=None):
+        """
+        Converts password to hashed password and initiates an instance
+        """
+        pw_hash = utils.make_pw_hash(username, password)
+        return User(username=username, password=pw_hash, email=email)
+
+    @classmethod
+    def login(cls, username, password):
+        """
+        Returns a user instance if user and password match
+        """
+        user = cls.by_name(username)
+        if user and utils.valid_pw(username, password, user.password):
+            return user
 
 
 class Post(db.Model):

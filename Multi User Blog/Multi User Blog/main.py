@@ -16,8 +16,12 @@
 #
 import webapp2
 from handlers.index import IndexHandler
+from handlers.auth import Register, LoginHandler, LogoutHandler
 
 
 app = webapp2.WSGIApplication([
-    ('/', IndexHandler)
+    ('/', IndexHandler),
+    ('/login', LoginHandler),
+    ('/logout', LogoutHandler),
+    ('/register', Register),
 ], debug=True)
