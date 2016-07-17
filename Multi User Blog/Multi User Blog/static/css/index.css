@@ -1,6 +1,7 @@
 .headers {
     font-size: 42px;
     font-weight: 900;
+    color: #333333;
 }
 .height-adjust{
     margin-top: 4%;
@@ -12,4 +13,29 @@
     padding: 0;
     max-width: 40%;
 }
-
+.post-title { 
+	font-weight: 700;
+    font-style: normal;
+    font-size: 36px;
+    line-height: 1.15;
+    letter-spacing: -.02em;
+}
+.pre {
+    font-weight: 400;
+    font-style: normal;
+    font-size: 21px;
+    line-height: 1.58;
+    letter-spacing: -.003em;
+}
+.post-date {
+    font-size: 14px;
+    font-weight: 600;
+    color: #999;
+    margin-top: 1.5%;
+}
+.top-clear{
+    margin-top: 10%;
+}
+.post-headers {
+    margin-left: -2%;
+}
