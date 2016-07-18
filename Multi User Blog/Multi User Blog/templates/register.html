@@ -12,12 +12,7 @@
     .label {text-align: right}
   </style>
 
-  {% if new_user %}
-    <div class="active alert alert-success">
-      {{new_user}} you are sucessfully registered! Please Login <a href="/login">here</a>!
-    </div>
 
-  {% else %} 
     {% if error_email %}
       <span class="text-danger">{{error_email}}</span>
     {% endif %}
@@ -60,7 +55,5 @@
         </div>
       </div>
     </div>
-
-  {% endif %} 
 
 {% endblock %}
