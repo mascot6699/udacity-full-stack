@@ -2,6 +2,7 @@ from .base import Handler
 from entities.entity import User
 import utils
 
+
 class AuthHandler(Handler):
     """
     Adds common utility methods needed for authentication

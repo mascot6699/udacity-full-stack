@@ -17,6 +17,7 @@
 import webapp2
 from handlers.index import IndexHandler
 from handlers.auth import Register, LoginHandler, LogoutHandler
+from handlers.blog import AddBlog, EditBlog, Permalink, BlogList
 
 
 app = webapp2.WSGIApplication([
@@ -24,4 +25,8 @@ app = webapp2.WSGIApplication([
     ('/login', LoginHandler),
     ('/logout', LogoutHandler),
     ('/register', Register),
+    ('/blog/add', AddBlog),
+    ('/blog/edit', EditBlog),
+    ('/blog/([0-9]+)', Permalink),
+    ('/allposts', BlogList),
 ], debug=True)
