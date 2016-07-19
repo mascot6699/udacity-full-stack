@@ -3,7 +3,7 @@ This file will contain all the entities required for Blog app
 """
 from google.appengine.ext import db
 
-import utils
+import utils, fields
 
 
 class User(db.Model):
@@ -48,6 +48,7 @@ class Post(db.Model):
     """
     title = db.StringProperty(required=True)
     content = db.TextProperty(required=True)
+    slug = fields.SlugProperty(title)
     user = db.ReferenceProperty(User, required=True, collection_name='posts')
     is_draft = db.BooleanProperty(default=False)
     modified_at = db.DateTimeProperty(auto_now=True)
