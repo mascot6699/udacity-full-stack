@@ -21,12 +21,12 @@ from handlers.blog import AddBlog, EditBlog, Permalink, BlogList
 
 
 app = webapp2.WSGIApplication([
-    ('/', IndexHandler),
+    ('/', BlogList),
+    ('/allposts', BlogList),
     ('/login', LoginHandler),
     ('/logout', LogoutHandler),
     ('/register', Register),
     ('/blog/add', AddBlog),
     ('/blog/edit', EditBlog),
-    ('/blog/([0-9]+)', Permalink),
-    ('/allposts', BlogList),
+    ('/blog/([a-z0-9\-]+)', Permalink),
 ], debug=True)

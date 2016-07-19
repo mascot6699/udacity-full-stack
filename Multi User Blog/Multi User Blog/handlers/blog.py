@@ -35,7 +35,7 @@ class AddBlog(AuthHandler):
                 user_obj = User.get_by_id(int(self.user))
                 post = Post(title=title, content=content, user=user_obj, published_at=datetime.now())
                 post.put()
-                self.redirect("/blog/{}".format(post.key().id()))
+                self.redirect("/blog/{}".format(post.slug))
             else:
                 error = "Both title and art required for submitting !"
                 self.render("add_blog.html", subject=title, content=content, error=error)
@@ -81,8 +81,8 @@ class Permalink(AuthHandler):
     """
     Blog post permalink.
     """
-    def get(self, post_id):
-        post = Post.get_by_id(int(post_id))
+    def get(self, post_slug):
+        post = Post.all().filter("slug =", post_slug).get()
         if not post:
             self.error(404)
             return
@@ -94,7 +94,7 @@ class BlogList(AuthHandler):
     Blog list page.
     """
     def get(self):
-        posts = db.GqlQuery("SELECT * FROM Post ORDER BY created_at DESC LIMIT 10")
+        posts = db.GqlQuery("SELECT * FROM Post WHERE is_draft=False ORDER BY created_at DESC LIMIT 10")
         if self.user:
             user = User.get_by_id(int(self.user))
             self.render('blog_list.html', posts=posts, username=user.username)
