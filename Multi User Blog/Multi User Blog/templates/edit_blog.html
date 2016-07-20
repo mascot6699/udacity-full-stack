@@ -8,9 +8,13 @@
 
 {% block content %}
 
+{% if access_error %}
+  <div class="active alert alert-danger">{{access_error}}</div>
+{% else %}
+
 {% if error %}
   <div class="active alert alert-danger">{{error}}</div>
-{% else %}
+{% endif %}
 
 <div class="container">
   <div class="row">

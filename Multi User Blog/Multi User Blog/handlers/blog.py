@@ -59,28 +59,36 @@ class EditBlog(AuthHandler):
                 self.render("edit_blog.html", post=post)
             else:
                 error = "You cannot edit this post."
-                self.render("edit_blog.html", error=error)
+                self.render("edit_blog.html", access_error=error)
         else:
             cookie_error = "Your session has expired please login again to continue!"
             self.render('login.html', error=cookie_error)
 
-    # def post(self):
-    #     """
-    #     To process ans store blog post information into database
-    #     """
-    #     title = self.request.get("subject")
-    #     content = self.request.get("content")
+    def post(self, post_id):
+        """
+        To process ans store blog post information into database
+        """
+        title = self.request.get("title")
+        content = self.request.get("content")
 
-    #     if self.authenticated():
-    #         if title and content:
-    #             a = Post(title=title, content=content, author=self.user)
-    #             a.put()
-    #             self.redirect("/blog/%s" % (a.key().id()))
-    #         else:
-    #             error = "Both title and art required for submitting !"
-    #             self.render("new.html", subject=title, content=content, error=error)
-    #     else:
-    #         self.login_redirect()
+        if self.user:
+            post = Post.get_by_id(int(post_id))
+            if post.user.key().id() == int(self.user):
+                if title and content:
+                    post.title = title
+                    post.content = content
+                    post.slug = post.slug
+                    # TODO: should we change slug or not? else permalink wont be perament! Dig on how to fix this
+                    post.put()
+                    self.redirect("/blog/{}".format(post.slug))
+                else:
+                    error = "Both title and art required for submitting !"
+                    self.render("edit_blog.html", post=post, error=error)
+            else:
+                error = "You cannot edit this post."
+                self.render("edit_blog.html", access_error=error)
+        else:
+            self.login_redirect()
 
 
 class Permalink(AuthHandler):
