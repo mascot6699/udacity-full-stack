@@ -49,14 +49,20 @@ class EditBlog(AuthHandler):
     To create a new blog post
     """
 
-    def get(self):
+    def get(self, post_id):
         """
         Renders the form for adding post
         """
-        # if self.authenticated():
-        self.render("add_blog.html")
-        # else:
-            # self.login_redirect()
+        if self.user:
+            post = Post.get_by_id(int(post_id))
+            if post.user.key().id() == int(self.user):
+                self.render("edit_blog.html", post=post)
+            else:
+                error = "You cannot edit this post."
+                self.render("edit_blog.html", error=error)
+        else:
+            cookie_error = "Your session has expired please login again to continue!"
+            self.render('login.html', error=cookie_error)
 
     # def post(self):
     #     """

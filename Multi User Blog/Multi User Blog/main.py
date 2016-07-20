@@ -27,6 +27,6 @@ app = webapp2.WSGIApplication([
     ('/logout', LogoutHandler),
     ('/register', Register),
     ('/blog/add', AddBlog),
-    ('/blog/edit', EditBlog),
+    ('/blog/edit/([0-9]+)', EditBlog),
     ('/blog/([a-z0-9\-]+)', Permalink),
 ], debug=True)
