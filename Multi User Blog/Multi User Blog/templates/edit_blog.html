@@ -1,9 +1,13 @@
 {% extends "base.html" %}
 
 {% block header %}
+{% if access_error %}
+  <div></div>
+{% else %}
 <div class="header">
-  <h1>Add new post</h1>
+  <h1>Edit post</h1>
 </div>
+{% endif %}
 {% endblock %}
 
 {% block content %}
