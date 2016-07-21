@@ -1,4 +1,5 @@
 """
+Contains CRUD views of blogs
 """
 from google.appengine.ext import db
 
@@ -21,7 +22,7 @@ class AddBlog(AuthHandler):
             self.render('add_blog.html', user=self.user)
         else:
             cookie_error = "Your session has expired please login again to continue!"
-            self.render('login.html', cookie_error = cookie_error)
+            self.render('login.html', error=cookie_error)
 
     def post(self):
         """
