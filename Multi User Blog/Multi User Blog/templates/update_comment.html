@@ -1,0 +1,37 @@
+
+{% extends "base.html" %}
+
+{% block header %}
+  <div class="header">
+    <h1>Update Comment</h1>
+  </div>
+{% endblock %}
+
+{% block content %}
+<div class="container height-adjust">
+  <div class="row">
+    <form role="form" method='post' action="/edit/comment/{{comment.key().id()}}">
+      <div class="row">
+        <label class="col-md-12">Comment on 
+          <br>
+          <a href="/blog/{{comment.post.title}}">{{comment.post.title}}</a>
+        </label>
+      </div>
+      <div class="row">
+        <label class="col-md-12">Content*</label><br>
+        <div class="row">
+          <textarea required id="comment" name="comment" rows="7" class="col-md-8 comment-text">
+          {{comment.comment}}
+          </textarea>
+        </div>
+      </div>
+      <label class="col-md-12"></label>  
+      <div class="row">
+      <button type="submit" class="btn btn-md btn-success">
+        <i class="fa fa-check"></i>&nbsp;Update comment
+      </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
