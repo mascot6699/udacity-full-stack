@@ -14,7 +14,42 @@
 {% block content %}
 <br>
 <br>
-<div class="pre">{{ post.content | safe}}</div>
+<div class="pre">
+	{{ post.content | safe}}
+</div>
+<div class="row">
+<div class="response">Responses</div>
+{% for comment in post.comments %}
+<div class="col-sm-8">
+    <div class="comment-user">
+      {{ comment.user.username }} says...
+    </div>
+    <div class="pull-right">
+      <a href="/edit/comment/{{comment.key().id()}}" class="btn btn-xs btn-success">Edit</a> |
+      <form method="post" action="/delete/comment/{{comment.key().id()}}" style="display: inline;">
+        <button type="submit" class="btn btn-xs btn-danger">
+          <i class="glyphicon glyphicon-trash"></i>&nbsp;Delete
+        </button>
+      </form>
+    </div>
+    <p class="comment-text">
+      {{ comment.comment }}
+    </p>
+    <hr/>
+  </div>
+{% endfor %}
+</div>
+<div class="row">
+<div class="col-sm-5">
+  <form method="post" action="/blog/{{post.key().id()}}/add/comment">
+    <h4>Write a response</h4>
+    <textarea name="comment" rows="5" cols="50" class="form-control">
+    </textarea>
+    <br>
+    <button type="submit" class="btn btn-sm btn-primary">Publish</button>
+  </form>
+</div>
+</div>
 {% endblock %}
 
 {% block bottom_nav %}
