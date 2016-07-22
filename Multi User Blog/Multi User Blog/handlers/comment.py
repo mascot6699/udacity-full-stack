@@ -48,11 +48,30 @@ class DeleteComment(AuthHandler):
 
 
 class CommentError(AuthHandler):
-    
+
     def get(self):
         """
         Handles error cases when unauthorized edit/delete is requested
         """
-        # self.write('')
-        error = "You can only edit or delete comments you have created."
+        error = "You can only edit or delete comments that you have created."
         self.render("edit_blog.html", access_error=error)
+
+
+class UpdateComment(AuthHandler):
+    
+    def get(self, comment_id):
+        """
+        Shows edit comment page
+        """
+        comment = Comment.get_by_id(int(comment_id))
+        if self.user:
+            if comment.user.key().id() == int(self.user):
+                self.render("update_comment.html", comment=comment)
+            else:
+                self.redirect('/comment/error')
+        else:
+            serror = "You must be logged in to change comments"
+            self.render('login.html', error=error)
+
+            
+        
