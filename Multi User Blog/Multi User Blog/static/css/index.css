@@ -56,3 +56,6 @@
     font-weight: 600;
     margin: 2%;
 }
+pre {
+    word-wrap: break-word;
+}

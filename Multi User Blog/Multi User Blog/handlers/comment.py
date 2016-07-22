@@ -73,5 +73,19 @@ class UpdateComment(AuthHandler):
             serror = "You must be logged in to change comments"
             self.render('login.html', error=error)
 
+    def post(self, comment_id):
+        """
+        """
+        comment = Comment.get_by_id(int(comment_id))
+        if self.user:
+            if comment.user.key().id() == int(self.user):
+                comment.comment = self.request.get('comment')
+                comment.put()
+                self.redirect('/blog/{}'.format(comment.post.slug))
+            else:
+                self.redirect('/comment/error')
+        else:
+            serror = "You must be logged in to change comments"
+            self.render('login.html', error=error)
             
         

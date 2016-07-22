@@ -24,7 +24,7 @@
     <div class="comment-user">
       {{ comment.user.username }} says...
     </div>
-    <div class="pull-right">
+    <div class="response pull-right">
       <a href="/edit/comment/{{comment.key().id()}}" class="btn btn-xs btn-success">Edit</a> |
       <form method="post" action="/delete/comment/{{comment.key().id()}}" style="display: inline;">
         <button type="submit" class="btn btn-xs btn-danger">
@@ -32,9 +32,9 @@
         </button>
       </form>
     </div>
-    <p class="comment-text">
+    <pre class="comment-text">
       {{ comment.comment }}
-    </p>
+    </pre>
     <hr/>
   </div>
 {% endfor %}
@@ -43,8 +43,7 @@
 <div class="col-sm-5">
   <form method="post" action="/blog/{{post.key().id()}}/add/comment">
     <h4>Write a response</h4>
-    <textarea name="comment" rows="5" cols="50" class="form-control">
-    </textarea>
+    <textarea name="comment" rows="5" cols="50" class="form-control"></textarea>
     <br>
     <button type="submit" class="btn btn-sm btn-primary">Publish</button>
   </form>
