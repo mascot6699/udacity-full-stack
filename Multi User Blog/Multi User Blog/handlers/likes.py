@@ -30,3 +30,13 @@ class LikeBlog(AuthHandler):
                 like = Like(post=post, user=user_obj)
                 like.put()
                 self.redirect("/blog/{}".format(post.slug))
+
+
+class LikeError(AuthHandler):
+
+    def get(self):
+        """
+        Handles error cases when unauthorized like is requested
+        """
+        error = "You can't like your own post & can only like a post once."
+        self.render("edit_blog.html", access_error=error)

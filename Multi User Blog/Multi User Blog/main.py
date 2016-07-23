@@ -19,7 +19,7 @@ from handlers.index import IndexHandler
 from handlers.auth import Register, LoginHandler, LogoutHandler
 from handlers.blog import AddBlog, EditBlog, Permalink, BlogList
 from handlers.comment import AddComment, DeleteComment, CommentError, UpdateComment
-from handlers.likes import LikeBlog
+from handlers.likes import LikeBlog, LikeError
 
 
 app = webapp2.WSGIApplication([
@@ -36,4 +36,5 @@ app = webapp2.WSGIApplication([
     ('/delete/comment/([0-9]+)', DeleteComment),
     ('/edit/comment/([0-9]+)', UpdateComment),
     ('/comment/error', CommentError),
+    ('/like/error', LikeError),
 ], debug=True)
