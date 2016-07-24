@@ -18,7 +18,20 @@
 	{{ post.content | safe}}
 </div>
 <div class="row">
-<div class="response">Responses</div>
+  <div class="col-md-8">
+    <ul class="list-inline">
+      <li><a href="/blog/like/{{post.key().id()}}" class="btn fa fa-heart-o"><span >&nbsp;{{post.likes.count()}}</span></a></li>
+      <li><a href="#comments"><span class="fa fa-comment-o"></span> {{post.comments.count()}} comments</a></li>
+      {% if is_author %}
+        <li><a href="/blog/edit/{{post.key().id()}}"><span class="fa fa-edit"></span>&nbsp;Edit</a></li>
+        <li><a href="/blog/delete/{{ post.key().id()}}"><span class="fa fa-trash-o"></span>&nbsp;Delete</a></li>
+      {% endif %}
+    </ul>
+  </div>
+</div>
+<div class="row">
+<br>
+<div class="response" id="comments">Responses</div>
 {% for comment in post.comments %}
 <div class="col-sm-8">
     <div class="comment-user">

@@ -31,9 +31,9 @@ class AddBlog(AuthHandler):
         title = self.request.get("title")
         content = self.request.get("content")
         if self.user:
+            user_obj = User.get_by_id(int(self.user))
             if title and content:
                 # adding publish date directly for now
-                user_obj = User.get_by_id(int(self.user))
                 post = Post(title=title, content=content, user=user_obj, published_at=datetime.now())
                 post.put()
                 self.redirect("/blog/{}".format(post.slug))
@@ -97,11 +97,14 @@ class Permalink(AuthHandler):
     Blog post permalink.
     """
     def get(self, post_slug):
+        is_author=False
         post = Post.all().filter("slug =", post_slug).get()
         if not post:
             self.error(404)
             return
-        self.render('permalink.html', post=post)
+        if post.user.key().id() == int(self.user):
+            is_author = True 
+        self.render('permalink.html', post=post, is_author=is_author)
 
 
 class BlogList(AuthHandler):
