@@ -118,3 +118,25 @@ class BlogList(AuthHandler):
             self.render('blog_list.html', posts=posts, username=user.username)
         else:
             self.render('blog_list.html', posts=posts)
+
+
+class DeleteBlog(AuthHandler):
+    """
+    To delete a blog post
+    """
+
+    def get(self, post_id):
+        """
+        To delete a blog post, Can be done by only user who created it
+        """
+        if self.user:
+            post = Post.get_by_id(int(post_id))
+            if post.user.key().id() == int(self.user):
+                post.delete()
+                self.redirect('/')
+            else:
+                error = "You cannot delete this post."
+                self.render("edit_blog.html", access_error=error)
+        else:
+            cookie_error = "Your session has expired please login again to continue!"
+            self.render('login.html', error=cookie_error)
