@@ -23,7 +23,6 @@ class LikeBlog(AuthHandler):
         else:
             post = Post.get_by_id(int(post_id))
             author = post.user.key().id()
-            import pdb; pdb.set_trace()
             if author == int(self.user) or Like.all().filter('post =', post).filter('user =', user_obj).get() != None:
                 self.redirect('/like/error')
             else:
