@@ -81,7 +81,7 @@ class EditBlog(AuthHandler):
                     # post.slug = post.slug
                     # TODO: should we change slug or not? else permalink wont be perament! Dig on how to fix this
                     new_post = post.put()
-                    self.redirect("/blog/{}".format(db.get(new_post).slug)))
+                    self.redirect("/blog/{}".format(db.get(new_post).slug))
                 else:
                     error = "Both title and art required for submitting !"
                     self.render("edit_blog.html", post=post, error=error)
