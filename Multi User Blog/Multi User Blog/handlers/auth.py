@@ -43,8 +43,14 @@ class AuthHandler(Handler):
         uid = self.read_secure_cookie('user_id')
         if uid and User.get_by_id(int(uid)):
             self.user = uid
+            self.blog_user = User.get_by_id(int(uid))
         else:
             self.user = None
+            self.blog_user = None
+
+    def render(self, template, **kw):
+        kw['blog_user'] = self.blog_user
+        self.write(self.render_str(template, **kw))
 
 
 class WelcomePage(Handler):
@@ -121,7 +127,7 @@ class Register(Signup):
             u = User.register(self.username, self.password, self.email)
             u.put()
             self.login(u)
-            self.render('login.html', new_user=u.username)
+            self.redirect('/')
 
 
 class LogoutHandler(AuthHandler):

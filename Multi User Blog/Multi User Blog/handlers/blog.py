@@ -31,12 +31,12 @@ class AddBlog(AuthHandler):
         title = self.request.get("title")
         content = self.request.get("content")
         if self.user:
-            user_obj = User.get_by_id(int(self.user))
             if title and content:
+                user_obj = User.get_by_id(int(self.user))
                 # adding publish date directly for now
                 post = Post(title=title, content=content, user=user_obj, published_at=datetime.now())
-                post.put()
-                self.redirect("/blog/{}".format(post.slug))
+                new_post = post.put()
+                self.redirect("/blog/{}".format(db.get(new_post).slug))
             else:
                 error = "Both title and art required for submitting !"
                 self.render("add_blog.html", subject=title, content=content, error=error)
@@ -78,10 +78,10 @@ class EditBlog(AuthHandler):
                 if title and content:
                     post.title = title
                     post.content = content
-                    post.slug = post.slug
+                    # post.slug = post.slug
                     # TODO: should we change slug or not? else permalink wont be perament! Dig on how to fix this
-                    post.put()
-                    self.redirect("/blog/{}".format(post.slug))
+                    new_post = post.put()
+                    self.redirect("/blog/{}".format(db.get(new_post).slug)))
                 else:
                     error = "Both title and art required for submitting !"
                     self.render("edit_blog.html", post=post, error=error)
