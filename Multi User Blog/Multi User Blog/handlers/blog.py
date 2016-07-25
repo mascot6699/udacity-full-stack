@@ -56,6 +56,8 @@ class EditBlog(AuthHandler):
         """
         if self.user:
             post = Post.get_by_id(int(post_id))
+            if not post:
+                self.error(404)
             if post.user.key().id() == int(self.user):
                 self.render("edit_blog.html", post=post)
             else:
@@ -102,7 +104,7 @@ class Permalink(AuthHandler):
         if not post:
             self.error(404)
             return
-        if post.user.key().id() == int(self.user):
+        if self.user and post.user.key().id() == int(self.user):
             is_author = True 
         self.render('permalink.html', post=post, is_author=is_author)
 
@@ -131,6 +133,8 @@ class DeleteBlog(AuthHandler):
         """
         if self.user:
             post = Post.get_by_id(int(post_id))
+            if not post:
+                self.error(404)
             if post.user.key().id() == int(self.user):
                 post.delete()
                 self.redirect('/')
