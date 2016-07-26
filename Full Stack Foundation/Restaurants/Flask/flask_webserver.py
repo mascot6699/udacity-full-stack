@@ -1,7 +1,7 @@
-from flask import Flask
+from flask import Flask, render_template
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from database_setup import Base, Restaurant
+from database_setup import Base, Restaurant, MenuItem
 
 app = Flask(__name__)
 
@@ -12,17 +12,30 @@ DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
 
+@app.route('/')
+def restaurantList():
+    restaurants = session.query(Restaurant).all()
+    return render_template('restaurants.html', restaurants=restaurants)
+
+@app.route('/add/restaurant/',  methods=['GET', 'POST'])
+def newRestaurant():
+    return "Dummy"
+
+
 @app.route('/<int:restaurant_id>/')
 @app.route('/restaurants/<int:restaurant_id>/')
-def restaurant(restaurant_id):
+def restaurantDetail(restaurant_id):
     restaurant = session.query(Restaurant).filter_by(id=restaurant_id).one()
     output = restaurant.name
     return output
 
 
-@app.route('/restaurant/<int:restaurant_id>/new/')
+@app.route('/restaurant/<int:restaurant_id>/new/', methods=['GET', 'POST'])
 def newMenuItem(restaurant_id):
-    return "page to create a new menu item. "
+    """
+    page to create a new menu item.
+    """
+    return "page to create a new menu item."
 
 
 @app.route('/restaurant/<int:restaurant_id>/<int:menu_id>/edit/')

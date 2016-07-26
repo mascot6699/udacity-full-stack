@@ -1,0 +1,16 @@
+<html>
+<head>
+	<link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles.css') }}">
+</head>	
+<body>
+	<div class='container'> 
+		{% for restaurant in restaurants %}
+			<h1>{{ restaurant.name }}</h1>
+			<h4>{{ restaurant.website }}</h4>
+		{% endfor %}
+		<a href = '{{url_for('newRestaurant') }}'>
+			Create New Restaurant
+		</a>
+	</div>
+</body> 
+</html>
