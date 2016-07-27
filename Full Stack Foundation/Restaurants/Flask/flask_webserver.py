@@ -40,8 +40,8 @@ def newRestaurant():
 @app.route('/restaurants/<int:restaurant_id>/')
 def restaurantDetail(restaurant_id):
     restaurant = session.query(Restaurant).filter_by(id=restaurant_id).one()
-    output = restaurant.name
-    return output
+    items = session.query(MenuItem).filter_by(restaurant_id=restaurant_id)
+    return render_template('menu.html', restaurant=restaurant, items=items)
 
 
 @app.route('/restaurant/<int:restaurant_id>/new/', methods=['GET', 'POST'])

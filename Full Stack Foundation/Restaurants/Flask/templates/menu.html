@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <br>
+    <br>
+    <h3>Menu of {{ restaurant.name }} </h3>
+    <br>
+    <div class="container">
+        {% for i in items %}
+            <div class="row">
+                <span class='col-md-3'><p>{{i.name}}</p></span>
+                <span class='col-md-2'><p>{{i.price}}</p></span>
+                <div class='col-md-5'>
+                    <p>{{i.description}}</p>
+                </div>
+                <div class = "col-md-2">
+                    <a href='{{url_for('editMenuItem',restaurant_id = restaurant.id, menu_id=i.id)}}' >Edit</a>
+                    <a href='{{url_for('deleteMenuItem', restaurant_id = restaurant.id, menu_id=i.id)}}' >Delete</a>
+                </div>
+            </div>
+            <hr>
+        {% endfor %}
+    </div>
+{% endblock %}

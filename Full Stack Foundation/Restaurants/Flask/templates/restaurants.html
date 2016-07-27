@@ -1,13 +1,13 @@
 {% extends "layout.html" %}
 
 {% block content %}
-		{% for restaurant in restaurants %}
-			<h1>{{ restaurant.name }}</h1>
-			<h4>{{ restaurant.website }}</h4>
-			<hr>
-		{% endfor %}
-		<a href = '{{url_for('newRestaurant') }}'>
-			Create New Restaurant
-		</a>
+	{% for restaurant in restaurants %}
+		<h1><a href="{{ url_for('restaurantDetail', restaurant_id=restaurant.id)}}" >{{ restaurant.name }}</a></h1>
+		<h4>{{ restaurant.website }}</h4>
+		<hr>
+	{% endfor %}
+	<a href = '{{url_for('newRestaurant') }}'>
+		Create New Restaurant
+	</a>
 {% endblock %}
 
