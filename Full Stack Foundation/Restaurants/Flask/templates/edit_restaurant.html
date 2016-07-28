@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<br>
+<br>
+<h3>Edit restaurant</h3>
+<hr>
+<form class="container" action="{{ url_for('newRestaurant')}}" method='post'>
+    <label>Name:</label><br>
+    <input type ='text' size='100' name='name' placeholder={{restaurant.name}} required><br><br>
+    <label>Website:</label><br>
+    <input type='url' size='100' name='website' placeholder={{restaurant.website}} required><br><br>
+    <input class="btn btn-default" type='submit' value='Update'>
+</form>
+{% endblock %}

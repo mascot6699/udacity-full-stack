@@ -7,9 +7,9 @@
 <hr>
 <form class="container" action="{{ url_for('newRestaurant')}}" method='post'>
     <label>Name:</label><br>
-    <input type ='text' size='100' name='name' required><br><br>
+    <input type='text' size='100' name='name' required><br><br>
     <label>Website:</label><br>
-    <input type = 'url' size='100' name='website' required><br><br>
-    <input type='submit' value='Create'>
+    <input type='url' size='100' name='website' required><br><br>
+    <input class="btn btn-default" type='submit' value='Create'>
 </form>
 {% endblock %}
