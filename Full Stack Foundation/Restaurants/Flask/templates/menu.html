@@ -21,4 +21,5 @@
             <hr>
         {% endfor %}
     </div>
+    <a class="btn btn-default" href="{{ url_for('newMenuItem', restaurant_id=restaurant.id)}}">Create a menu item</a>
 {% endblock %}

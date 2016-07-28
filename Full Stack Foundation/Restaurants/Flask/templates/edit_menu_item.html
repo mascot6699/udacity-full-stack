@@ -5,7 +5,7 @@
     <br>
     <h3>Edit Menu Item</h3>
     <br>
-    <form action="{{ url_for('editMenuItem',restaurant_id = restaurant_id, menu_id=item.id)}}" method = 'post'>
+    <form action="{{ url_for('editMenuItem', restaurant_id=restaurant_id, menu_id=item.id)}}" method = 'post'>
         <div>
             <label>Name:</label><br>
             <input type ='text' size='100' name='name' placeholder='{{item.name }}'><br><br>

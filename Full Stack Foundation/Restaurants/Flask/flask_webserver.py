@@ -49,7 +49,14 @@ def newMenuItem(restaurant_id):
     """
     page to create a new menu item.
     """
-    return "page to create a new menu item."
+    if request.method == 'POST':
+        newItem = MenuItem(name=request.form['name'], description=request.form['description'], 
+            price=request.form['price'], restaurant_id=restaurant_id)
+        session.add(newItem)
+        session.commit()
+        return redirect(url_for('restaurantDetail', restaurant_id=restaurant_id))
+    else:
+        return render_template('add_menu_item.html', restaurant_id=restaurant_id)
 
 
 @app.route('/restaurant/<int:restaurant_id>/<int:menu_id>/edit/', methods=['GET', 'POST'])
