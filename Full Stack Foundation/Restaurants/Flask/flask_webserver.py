@@ -133,6 +133,21 @@ def restaurantMenuJSON(restaurant_id):
     return jsonify(menu=[i.serialize for i in items])
 
 
+@app.route('/restaurants/JSON/')
+def restaurantJSON():
+    restaurants = session.query(Restaurant).all()
+    return jsonify(restaurants=[i.serialize for i in restaurants])
+
+
+@app.route('/restaurant/<int:restaurant_id>/menu/<int:menu_id>/JSON/')
+def menuItemJSON(restaurant_id, menu_id):
+    """
+    """
+    # TODO: check if menu belongs to restaurant?
+    menuItem = session.query(MenuItem).filter_by(id=menu_id).one()
+    return jsonify(menu=menuItem.serialize)
+
+
 if __name__ == '__main__':
     app.debug = True
     app.secret_key = "not_very_secretive"

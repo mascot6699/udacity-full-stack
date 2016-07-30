@@ -20,6 +20,17 @@ class Restaurant(Base):
     name = Column(String(100), nullable=False)
     website = Column(String(100), nullable=True)
 
+    @property
+    def serialize(self):
+        """
+        Return object data in serialized format
+        """
+        return {
+            'id': self.id,
+            'name': self.name,
+            'website': self.website,
+            }
+
 
 class MenuItem(Base):
     __tablename__ = 'menu_item'
