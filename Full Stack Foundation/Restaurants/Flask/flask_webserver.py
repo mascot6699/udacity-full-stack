@@ -1,7 +1,8 @@
-from flask import Flask, render_template, request, flash, redirect, url_for, jsonify
+from flask import Flask, render_template, request, flash, redirect, url_for, jsonify, session as login_session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from database_setup import Base, Restaurant, MenuItem
+import random, string
 
 app = Flask(__name__)
 
@@ -10,6 +11,14 @@ Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
+
+
+# Create anti-forgery state token
+@app.route('/login')
+def showLogin():
+    state = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in xrange(32))
+    login_session['state'] = state
+    return render_template("login.html", state=state)
 
 
 @app.route('/')
@@ -151,4 +160,4 @@ def menuItemJSON(restaurant_id, menu_id):
 if __name__ == '__main__':
     app.debug = True
     app.secret_key = "not_very_secretive"
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=8080)
