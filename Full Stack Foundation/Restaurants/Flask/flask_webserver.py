@@ -1,8 +1,13 @@
-from flask import Flask, render_template, request, flash, redirect, url_for, jsonify, session as login_session
+from flask import Flask, render_template, request, flash, redirect, url_for, jsonify, make_response, session as login_session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+
+from oauth2client import client, crypt
+
 from database_setup import Base, Restaurant, MenuItem
-import random, string
+
+import random, string, requests, json
+
 
 app = Flask(__name__)
 
@@ -12,6 +17,8 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
+WEB_CLIENT_ID = json.loads(open('client_secret.json', 'r').read())['web']['client_id']
+
 
 # Create anti-forgery state token
 @app.route('/login')
@@ -19,6 +26,50 @@ def showLogin():
     state = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in xrange(32))
     login_session['state'] = state
     return render_template("login.html", state=state)
+
+
+@app.route('/gconnect', methods=['POST'])
+def gconnect():
+    # Validate state token
+    if request.args.get('state') != login_session['state']:
+        response = make_response(json.dumps('Invalid state parameter.'), 401)
+        response.headers['Content-Type'] = 'application/json'
+        return response
+    # Obtain authorization code
+    code = request.data
+    # url = 'https://www.googleapis.com/oauth2/v3/tokeninfo'
+    # params = {'id_token': code}
+    # result = requests.get(url, params=params)
+
+    try:
+        idinfo = client.verify_id_token(code, WEB_CLIENT_ID)
+        # If multiple clients access the backend server:
+        if idinfo['aud'] not in [WEB_CLIENT_ID]:
+            raise crypt.AppIdentityError("Unrecognized client.")
+        if idinfo['iss'] not in ['accounts.google.com', 'https://accounts.google.com']:
+            raise crypt.AppIdentityError("Wrong issuer.")
+    except crypt.AppIdentityError as e:
+        response = make_response(json.dumps(e.message), 401)
+        response.headers['Content-Type'] = 'application/json'
+        return response
+
+    gplus_id = idinfo['sub']
+
+    stored_access_token = login_session.get('access_token')
+    stored_gplus_id = login_session.get('gplus_id')
+
+    if stored_access_token is not None and gplus_id == stored_gplus_id:
+        response = make_response(json.dumps('Current user is already connected.'), 200)
+        response.headers['Content-Type'] = 'application/json'
+        return response
+
+    login_session['username'] = idinfo['name']
+    login_session['picture'] = idinfo['picture']
+    login_session['email'] = idinfo['email']
+
+    output = '<h3>Welcome, {}!</h3><img src="{}" class="google-img">'.format(login_session['username'], login_session['picture'])
+    flash("you are now logged in as {}".format(login_session['username']))
+    return output
 
 
 @app.route('/')
