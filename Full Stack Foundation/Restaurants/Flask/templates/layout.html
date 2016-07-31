@@ -50,7 +50,11 @@
 
         window.onload = function () {
           gapi.load('auth2', function() {
-            gapi.auth2.init();
+            if (gapi.auth2.getAuthInstance){
+              gapi.auth2.getAuthInstance();
+            } else {
+              gapi.auth2.init();
+            }
           });
         }
 

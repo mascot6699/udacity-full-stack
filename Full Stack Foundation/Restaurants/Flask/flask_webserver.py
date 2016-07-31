@@ -4,7 +4,7 @@ from sqlalchemy.orm import sessionmaker
 
 from oauth2client import client, crypt
 
-from database_setup import Base, Restaurant, MenuItem
+from database_setup import Base, Restaurant, MenuItem, User
 
 import random, string, requests, json
 
@@ -51,7 +51,6 @@ def gdisconnect():
         response.headers['Content-Type'] = 'application/json'
         return response
     else:
-        print login_session
         del login_session['username']
         del login_session['email']
         del login_session['picture']
@@ -93,20 +92,70 @@ def gconnect():
         return response
 
     gplus_id = idinfo['sub']
-
-    stored_access_token = login_session.get('access_token')
     stored_gplus_id = login_session.get('gplus_id')
 
-    if stored_access_token is not None and gplus_id == stored_gplus_id:
+    if gplus_id == stored_gplus_id:
         response = make_response(json.dumps('Current user is already connected.'), 200)
         response.headers['Content-Type'] = 'application/json'
         return response
 
+    # see if user exists, if it doesn't make a new one
+    user_id = get_user_id(idinfo["email"])
+    if not user_id:
+        user_id = create_user(login_session)
+
+    # set session variables    
+    login_session['user_id'] = user_id
+    login_session['auth_type'] = 'gplus'
     login_session['username'] = idinfo['name']
     login_session['picture'] = idinfo['picture']
     login_session['email'] = idinfo['email']
-    login_session['auth_type'] = 'gplus'
 
+    # response to be shown
+    output = '<h3>Welcome, {}!</h3><img src="{}" class="google-img">'.format(login_session['username'], login_session['picture'])
+    flash("You are now logged in as {}".format(login_session['username']))
+    return output
+
+
+
+@app.route('/fbconnect', methods=['POST'])
+def fbconnect():
+    if request.args.get('state') != login_session['state']:
+        response = make_response(json.dumps('Invalid state parameter.'), 401)
+        response.headers['Content-Type'] = 'application/json'
+        return response
+    access_token = request.data
+    print "access token received %s " % access_token
+
+    app_id = json.loads(open('fb_client_secret.json', 'r').read())['web']['app_id']
+    app_secret = json.loads(open('fb_client_secret.json', 'r').read())['web']['app_secret']
+    url = 'https://graph.facebook.com/oauth/access_token?grant_type=fb_exchange_token&client_id={}&client_secret={}&fb_exchange_token={}'.format(app_id, app_secret, access_token)
+    result = requests.get(url)
+    token = result.text.split("&")[0]
+
+    url = 'https://graph.facebook.com/v2.7/me?{}&fields=name,id,email'.format(token)
+    data = requests.get(url).json()
+    # The token must be stored in the login_session in order to properly logout, let's strip out the information before the equals sign in our token
+    stored_token = token.split("=")[1]
+    login_session['access_token'] = stored_token
+    login_session['auth_type'] = 'facebook'
+    login_session['username'] = data["name"]
+    login_session['email'] = data["email"]
+    login_session['facebook_id'] = data["id"]
+
+    # Get user picture
+    url = 'https://graph.facebook.com/v2.4/me/picture?%s&redirect=0&height=200&width=200' % token
+    data = requests.get(url).json()
+
+    login_session['picture'] = data["data"]["url"]
+
+    # see if user exists
+    user_id = get_user_id(login_session['email'])
+    if not user_id:
+        user_id = create_user(login_session)
+    login_session['user_id'] = user_id
+
+    # response to be shown
     output = '<h3>Welcome, {}!</h3><img src="{}" class="google-img">'.format(login_session['username'], login_session['picture'])
     flash("You are now logged in as {}".format(login_session['username']))
     return output

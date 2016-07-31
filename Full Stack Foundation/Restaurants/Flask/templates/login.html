@@ -2,7 +2,7 @@
 
 {% block head %}
     {{ super() }}
-    <script src="https://apis.google.com/js/platform.js"> </script>
+    <script src="https://apis.google.com/js/platform.js?onload=start"> </script>
 {% endblock %}
 
 {% block content %}
@@ -16,7 +16,8 @@
                 <div class="g-signin2" data-onsuccess="signInCallback"></div>
             </div>        
             <div class="col-sm-6"> 
-
+                <fb:login-button scope="public_profile,email" onlogin="sendTokenToServer();" data-size="large">
+                </fb:login-button>
             </div>
         </div>
         <div id="result"></div>
@@ -49,5 +50,52 @@
                 });
             }
         }
+
+        window.fbAsyncInit = function() {
+            FB.init({
+                appId      : '665308613636330',
+                cookie     : true,  // enable cookies to allow the server to access the session
+                xfbml      : true,  // parse social plugins on this page
+                version    : 'v2.5' // use graph api version 2.5
+            });
+        };
+
+        // Load the SDK asynchronously
+        (function(d, s, id) {
+          var js, fjs = d.getElementsByTagName(s)[0];
+          if (d.getElementById(id)) return;
+          js = d.createElement(s); js.id = id;
+          js.src = "//connect.facebook.net/en_US/sdk.js";
+          fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+
+        // Here we run a very simple test of the Graph API after login is
+        // successful.  See statusChangeCallback() for when this call is made.
+        function sendTokenToServer() {
+
+            var access_token = FB.getAuthResponse()['accessToken'];
+            if (access_token) {
+                // Hide the sign-in button now that the user is authorized
+                $('#signinButtons').attr('style', 'display: none');
+                $.ajax({
+                    type: 'POST',
+                    url: '/fbconnect?state={{state}}',
+                    processData: false,
+                    data: access_token,
+                    contentType: 'application/octet-stream; charset=utf-8',
+                    success: function(result) {
+                        // Handle or verify the server response if necessary.
+                        if (result) {
+                            $('#result').html('Login Successful!<br><br>'+ result + '<br><br>Redirecting...')
+                            setTimeout(function() {
+                                window.location.href = "/";
+                            }, 2500);
+                        } else {
+                           $('#result').html('Failed to make a server-side call. Check your configuration and console.');
+                        }
+                    }
+                });
+            }
+        };
     </script>
 {% endblock %}
