@@ -2,7 +2,7 @@
 
 {% block head %}
     {{ super() }}
-    <script src="//apis.google.com/js/platform.js?onload=start"> </script>
+    <script src="https://apis.google.com/js/platform.js"> </script>
 {% endblock %}
 
 {% block content %}
@@ -13,7 +13,7 @@
     <div class="container">
         <div id="signinButtons">
             <div class="col-sm-6"> 
-                <meta name="google-signin-client_id" content="256034514155-5rkh86s9hbdet4cl59egaoqeie2bh8p6.apps.googleusercontent.com">
+                
                 <div class="g-signin2" data-onsuccess="signInCallback"></div>
             </div>        
             <div class="col-sm-6"> 

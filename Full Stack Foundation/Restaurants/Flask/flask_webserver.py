@@ -11,13 +11,55 @@ import random, string, requests, json
 
 app = Flask(__name__)
 
-engine = create_engine('sqlite:///restaurant.db')
+engine = create_engine('sqlite:///restaurantmenuwithusers.db')
 Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
 WEB_CLIENT_ID = json.loads(open('client_secret.json', 'r').read())['web']['client_id']
+
+
+def create_user(login_session):
+    newUser = User(name=login_session['username'], 
+        email=login_session['email'], picture=login_session['picture'])
+    session.add(newUser)
+    session.commit()
+    user = session.query(User).filter_by(email=login_session['email']).one()
+    return user.id
+
+
+def get_user_info(user_id):
+    user = session.query(User).filter_by(id=user_id).one()
+    return user
+
+
+def get_user_id(email):
+    try:
+        user = session.query(User).filter_by(email=email).one()
+        return user.id
+    except:
+        return None
+
+
+# For disconnecting from google plus
+@app.route('/gdisconnect')
+def gdisconnect():
+
+    if login_session['email'] is None:
+        response = make_response(json.dumps('Current user not connected.'), 401)
+        response.headers['Content-Type'] = 'application/json'
+        return response
+    else:
+        print login_session
+        del login_session['username']
+        del login_session['email']
+        del login_session['picture']
+        del login_session['state']
+        del login_session['auth_type']
+
+        flash("Goodbye!")
+        return redirect('/')
 
 
 # Create anti-forgery state token
@@ -35,11 +77,8 @@ def gconnect():
         response = make_response(json.dumps('Invalid state parameter.'), 401)
         response.headers['Content-Type'] = 'application/json'
         return response
-    # Obtain authorization code
+
     code = request.data
-    # url = 'https://www.googleapis.com/oauth2/v3/tokeninfo'
-    # params = {'id_token': code}
-    # result = requests.get(url, params=params)
 
     try:
         idinfo = client.verify_id_token(code, WEB_CLIENT_ID)
@@ -66,10 +105,17 @@ def gconnect():
     login_session['username'] = idinfo['name']
     login_session['picture'] = idinfo['picture']
     login_session['email'] = idinfo['email']
+    login_session['auth_type'] = 'gplus'
 
     output = '<h3>Welcome, {}!</h3><img src="{}" class="google-img">'.format(login_session['username'], login_session['picture'])
-    flash("you are now logged in as {}".format(login_session['username']))
+    flash("You are now logged in as {}".format(login_session['username']))
     return output
+
+
+@app.route('/logout')
+def logout():
+    if login_session['auth_type'] == 'gplus':
+        return redirect(url_for('gdisconnect'))
 
 
 @app.route('/')

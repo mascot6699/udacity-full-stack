@@ -1,17 +1,19 @@
 {% extends "layout.html" %}
 
+
 {% block content %}
-	{% for restaurant in restaurants %}
-		<h1><a href="{{ url_for('restaurantDetail', restaurant_id=restaurant.id)}}">{{restaurant.name}}</a></h1>
+    
+    {% for restaurant in restaurants %}
+        <h1><a href="{{ url_for('restaurantDetail', restaurant_id=restaurant.id)}}">{{restaurant.name}}</a></h1>
         <div class="pull-right">
             <a class="btn btn-default" href='{{url_for('editRestaurant',restaurant_id=restaurant.id)}}'>Edit</a>
             <a class="btn btn-default" href='{{url_for('deleteRestaurant', restaurant_id=restaurant.id)}}'>Delete</a>
         </div>
-		<h4>{{ restaurant.website }}</h4>
-		<hr>
-	{% endfor %}
-	<a class="btn btn-default" href='{{url_for('newRestaurant') }}'>
-		Create New Restaurant
-	</a>
+        <h4>{{ restaurant.website }}</h4>
+        <hr>
+    {% endfor %}
+    <a class="btn btn-default" href='{{url_for('newRestaurant') }}'>
+        Create New Restaurant
+    </a>
 {% endblock %}
 
