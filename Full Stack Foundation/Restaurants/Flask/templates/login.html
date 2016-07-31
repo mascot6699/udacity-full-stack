@@ -13,7 +13,6 @@
     <div class="container">
         <div id="signinButtons">
             <div class="col-sm-6"> 
-                
                 <div class="g-signin2" data-onsuccess="signInCallback"></div>
             </div>        
             <div class="col-sm-6"> 
@@ -42,7 +41,7 @@
                             $('#result').html('Login Successful!<br><br>'+ result + '<br><br>Redirecting...')
                             setTimeout(function() {
                                 window.location.href = "/";
-                            }, 4000);
+                            }, 2500);
                         } else {
                             $('#result').html('Failed to make a server-side call. Check your configuration and console.');
                         }

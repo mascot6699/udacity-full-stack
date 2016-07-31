@@ -20,6 +20,8 @@
         <div class="col-offset-md-5 col-md-4 pull-right">
           {% if session['auth_type'] %}
             <a href="/logout" onclick="signOut();">Sign out</a>
+          {% else %}
+            <a href="/login">Login</a>
           {% endif %}
         </div>
       </div>
