@@ -61,6 +61,41 @@ def gdisconnect():
         return redirect('/')
 
 
+@app.route('/fbdisconnect')
+def fbdisconnect():
+    # The access token must me included to successfully logout
+    facebook_id = login_session['facebook_id']
+    access_token = login_session['access_token']
+    url = 'https://graph.facebook.com/{}/permissions?access_token={}'.format(facebook_id, access_token)
+    h = httplib2.Http()
+    result = h.request(url, 'DELETE')[1]
+
+    # delete session
+    del login_session['username']
+    del login_session['email']
+    del login_session['picture']
+    del login_session['state']
+    del login_session['auth_type']
+    del login_session['facebook_id']
+    del login_session['access_token']
+
+    flash("Goodbye!")
+    return redirect('/')
+
+
+@app.route('/logout')
+def logout():
+    """
+    Call the corresponding logout function by checking auth_type
+    """
+    if login_session['auth_type']:
+        if login_session['auth_type'] == 'gplus':
+            return redirect(url_for('gdisconnect'))
+        elif login_session['auth_type'] == 'facebook':
+            return redirect(url_for('fbdisconnect'))
+    return redirect(url_for('showLogin'))
+
+
 # Create anti-forgery state token
 @app.route('/login')
 def showLogin():
@@ -159,12 +194,6 @@ def fbconnect():
     output = '<h3>Welcome, {}!</h3><img src="{}" class="google-img">'.format(login_session['username'], login_session['picture'])
     flash("You are now logged in as {}".format(login_session['username']))
     return output
-
-
-@app.route('/logout')
-def logout():
-    if login_session['auth_type'] == 'gplus':
-        return redirect(url_for('gdisconnect'))
 
 
 @app.route('/')
