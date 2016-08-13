@@ -17,12 +17,15 @@
   <body>
     {% block navbar %}
       <div class="row">
-        <div class="col-offset-md-5 col-md-4 pull-right">
+        <div class="col-offset-md-2 col-md-4 pull-right">
           {% if session['auth_type'] %}
             <a href="/logout" onclick="signOut();">Sign out</a>
           {% else %}
             <a href="/login">Login</a>
           {% endif %}
+        </div>
+        <div class="col-offset-md-2 col-md-4 pull-right">
+          <a href="/">Home</a>
         </div>
       </div>
     {% endblock %}

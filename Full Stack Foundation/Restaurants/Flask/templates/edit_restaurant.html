@@ -3,13 +3,15 @@
 {% block content %}
 <br>
 <br>
-<h3>Edit restaurant</h3>
-<hr>
-<form class="container" action="{{ url_for('newRestaurant')}}" method='post'>
-    <label>Name:</label><br>
-    <input type ='text' size='100' name='name' placeholder={{restaurant.name}} required><br><br>
-    <label>Website:</label><br>
-    <input type='url' size='100' name='website' placeholder={{restaurant.website}} required><br><br>
-    <input class="btn btn-default" type='submit' value='Update'>
-</form>
+{% if not error %}
+    <h3>Edit restaurant</h3>
+    <hr>
+    <form class="container" action="{{ url_for('editRestaurant', restaurant_id=restaurant.id)}}" method='post'>
+        <label>Name:</label><br>
+        <input type ='text' size='100' name='name' value={{restaurant.name}}><br><br>
+        <label>Website:</label><br>
+        <input type='url' size='100' name='website' value={{restaurant.website}}><br><br>
+        <input class="btn btn-default" type='submit' value='Update'>
+    </form>
+{% endif %}
 {% endblock %}

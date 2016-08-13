@@ -3,6 +3,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from oauth2client import client, crypt
+import httplib2
 
 from database_setup import Base, Restaurant, MenuItem, User
 
@@ -56,6 +57,7 @@ def gdisconnect():
         del login_session['picture']
         del login_session['state']
         del login_session['auth_type']
+        del login_session['user_id']
 
         flash("Goodbye!")
         return redirect('/')
@@ -68,7 +70,7 @@ def fbdisconnect():
     access_token = login_session['access_token']
     url = 'https://graph.facebook.com/{}/permissions?access_token={}'.format(facebook_id, access_token)
     h = httplib2.Http()
-    result = h.request(url, 'DELETE')[1]
+    h.request(url, 'DELETE')[1]
 
     # delete session
     del login_session['username']
@@ -78,6 +80,7 @@ def fbdisconnect():
     del login_session['auth_type']
     del login_session['facebook_id']
     del login_session['access_token']
+    del login_session['user_id']
 
     flash("Goodbye!")
     return redirect('/')
@@ -93,12 +96,12 @@ def logout():
             return redirect(url_for('gdisconnect'))
         elif login_session['auth_type'] == 'facebook':
             return redirect(url_for('fbdisconnect'))
-    return redirect(url_for('showLogin'))
+    return redirect(url_for('login'))
 
 
 # Create anti-forgery state token
 @app.route('/login')
-def showLogin():
+def login():
     state = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in xrange(32))
     login_session['state'] = state
     return render_template("login.html", state=state)
@@ -152,7 +155,6 @@ def gconnect():
     return output
 
 
-
 @app.route('/fbconnect', methods=['POST'])
 def fbconnect():
     if request.args.get('state') != login_session['state']:
@@ -164,7 +166,8 @@ def fbconnect():
 
     app_id = json.loads(open('fb_client_secret.json', 'r').read())['web']['app_id']
     app_secret = json.loads(open('fb_client_secret.json', 'r').read())['web']['app_secret']
-    url = 'https://graph.facebook.com/oauth/access_token?grant_type=fb_exchange_token&client_id={}&client_secret={}&fb_exchange_token={}'.format(app_id, app_secret, access_token)
+    url = 'https://graph.facebook.com/oauth/access_token?grant_type=fb_exchange_token&client_id={}' \
+          '&client_secret={}&fb_exchange_token={}'.format(app_id, app_secret, access_token)
     result = requests.get(url)
     token = result.text.split("&")[0]
 
@@ -211,7 +214,8 @@ def newRestaurant():
     Show addition of restaurant form
     """
     if request.method == 'POST':
-        newRestaurant = Restaurant(name=request.form['name'], website=request.form['website'])
+        newRestaurant = Restaurant(name=request.form['name'], website=request.form['website'],
+                                   user_id=login_session['user_id'])
         session.add(newRestaurant)
         session.commit()
         flash("New restaurant created!")
@@ -225,14 +229,22 @@ def deleteRestaurant(restaurant_id):
     """
     Page to delete a restaurant.
     """
+    error = False
     restaurant = session.query(Restaurant).filter_by(id=restaurant_id).one()
-    if request.method == 'POST':
-        session.delete(restaurant)
-        session.commit()
-        flash("Restaurant has been deleted!")
-        return redirect(url_for('restaurantList'))
+    if restaurant.user_id == login_session['user_id']:
+        if request.method == 'POST':
+            session.delete(restaurant)
+            session.commit()
+            flash("Restaurant has been deleted!")
+            return redirect(url_for('restaurantList'))
+        else:
+            if restaurant.user_id != login_session['user_id']:
+                error = True
+                flash("Only owner can delete their restaurant!")
+            return render_template('delete_restaurant.html', restaurant=restaurant, error=error)
     else:
-        return render_template('delete_restaurant.html', restaurant=restaurant)
+        flash("Only owner can delete their restaurant!")
+        return redirect(url_for('restaurantList'))
 
 
 @app.route('/restaurant/<int:restaurant_id>/edit/', methods=['GET', 'POST'])
@@ -240,16 +252,24 @@ def editRestaurant(restaurant_id):
     """
     Page to edit a restaurant. 
     """
+    error = False
     restaurant = session.query(Restaurant).filter_by(id=restaurant_id).one()
-    if request.method == 'POST':
-        restaurant.name = request.form['name'] if request.form['name'] else restaurant.name
-        restaurant.website = request.form['website'] if request.form['description'] else restaurant.website
-        session.add(restaurant)
-        session.commit()
-        flash("Restaurant has been edited!")
-        return redirect(url_for('restaurantList'))
+    if restaurant.user_id == login_session['user_id']:
+        if request.method == 'POST':
+            restaurant.name = request.form['name'] if request.form['name'] else restaurant.name
+            restaurant.website = request.form['website'] if request.form['website'] else restaurant.website
+            session.add(restaurant)
+            session.commit()
+            flash("Restaurant has been edited!")
+            return redirect(url_for('restaurantList'))
+        else:
+            if restaurant.user_id != login_session['user_id']:
+                error = True
+                flash("Only owner can edit their restaurant!")
+            return render_template('edit_restaurant.html', restaurant=restaurant, error=error)
     else:
-        return render_template('edit_restaurant.html', restaurant=restaurant)
+        flash("Only owner can delete their restaurant!")
+        return redirect(url_for('restaurantList'))
 
 
 @app.route('/<int:restaurant_id>/')
@@ -267,7 +287,7 @@ def newMenuItem(restaurant_id):
     """
     if request.method == 'POST':
         newItem = MenuItem(name=request.form['name'], description=request.form['description'], 
-            price=request.form['price'], restaurant_id=restaurant_id)
+            price=request.form['price'], restaurant_id=restaurant_id, user_id=login_session['user_id'])
         session.add(newItem)
         session.commit()
         flash("Menu has been created!")
@@ -281,19 +301,27 @@ def editMenuItem(restaurant_id, menu_id):
     """
     page to edit a menu item. 
     """
+    error = False
     editedItem = session.query(MenuItem).filter_by(id=menu_id).one()
-    if request.method == 'POST':
-        editedItem.name = request.form['name'] if request.form['name'] else editedItem.name
-        if request.form['description']:
-            editedItem.description = request.form['description']
-        if request.form['price']:
-            editedItem.price = request.form['price']
-        session.add(editedItem)
-        session.commit()
-        flash("Menu has been edited!")
-        return redirect(url_for('restaurantDetail', restaurant_id=restaurant_id))
+    if editedItem.user_id == login_session['user_id']:
+        if request.method == 'POST':
+            editedItem.name = request.form['name'] if request.form['name'] else editedItem.name
+            if request.form['description']:
+                editedItem.description = request.form['description']
+            if request.form['price']:
+                editedItem.price = request.form['price']
+            session.add(editedItem)
+            session.commit()
+            flash("Menu has been edited!")
+            return redirect(url_for('restaurantDetail', restaurant_id=restaurant_id))
+        else:
+            if editedItem.user_id != login_session['user_id']:
+                error = True
+                flash("Only owner can edit their menu items!")
+            return render_template('edit_menu_item.html', item=editedItem, restaurant_id=restaurant_id, error=error)
     else:
-        return render_template('edit_menu_item.html', item=editedItem, restaurant_id=restaurant_id)
+        flash("Only owner can edit their menu items!")
+        return redirect(url_for('restaurantDetail'))
 
 
 @app.route('/restaurant/<int:restaurant_id>/<int:menu_id>/delete/', methods=['GET', 'POST'])
@@ -301,14 +329,22 @@ def deleteMenuItem(restaurant_id, menu_id):
     """
     page to delete a menu item.
     """
+    error = False
     item = session.query(MenuItem).filter_by(id=menu_id).one()
-    if request.method == 'POST':
-        session.delete(item)
-        session.commit()
-        flash("Menu has been deleted!")
-        return redirect(url_for('restaurantDetail', restaurant_id=restaurant_id))
+    if item.user_id == login_session['user_id']:
+        if request.method == 'POST':
+            session.delete(item)
+            session.commit()
+            flash("Menu has been deleted!")
+            return redirect(url_for('restaurantDetail', restaurant_id=restaurant_id))
+        else:
+            if item.user_id != login_session['user_id']:
+                error = True
+                flash("Only owner can delete their menu items!")
+            return render_template('delete_item_confirm.html', item=item, error=error)
     else:
-        return render_template('delete_item_confirm.html', item=item)
+        flash("Only owner can delete their menu items!")
+        return redirect(url_for('restaurantDetail'))
 
 
 @app.route('/restaurants/<int:restaurant_id>/menu/JSON')

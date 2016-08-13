@@ -2,13 +2,15 @@
 
 {% block content %}
 <br><br>
-<div class="container">
-	<h3> Are you sure you want to delete {{restaurant.name}}? </h3>
-	<form action="{{ url_for('deleteRestaurant', restaurant_id=restaurant.id)}}" method='post'>
-		<input class="btn btn-danger" type='submit' value='Delete'>
-	</form>
-	<br>
-	<br>
-	<a class="btn btn-default" href='{{url_for('restaurantList')}}'>Cancel</a>
-</div>
+{% if not error %}
+	<div class="container">
+		<h3> Are you sure you want to delete {{restaurant.name}}? </h3>
+		<form action="{{ url_for('deleteRestaurant', restaurant_id=restaurant.id)}}" method='post'>
+			<input class="btn btn-danger" type='submit' value='Delete'>
+		</form>
+		<br>
+		<br>
+		<a class="btn btn-default" href='{{url_for('restaurantList')}}'>Cancel</a>
+	</div>
+{% endif %}
 {% endblock %}

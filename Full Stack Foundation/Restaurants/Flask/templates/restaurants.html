@@ -5,10 +5,12 @@
     
     {% for restaurant in restaurants %}
         <h1><a href="{{ url_for('restaurantDetail', restaurant_id=restaurant.id)}}">{{restaurant.name}}</a></h1>
-        <div class="pull-right">
-            <a class="btn btn-default" href='{{url_for('editRestaurant',restaurant_id=restaurant.id)}}'>Edit</a>
-            <a class="btn btn-default" href='{{url_for('deleteRestaurant', restaurant_id=restaurant.id)}}'>Delete</a>
-        </div>
+        {% if session['user_id'] == restaurant.user_id %}
+            <div class="pull-right">
+                <a class="btn btn-default" href='{{url_for('editRestaurant',restaurant_id=restaurant.id)}}'>Edit</a>
+                <a class="btn btn-default" href='{{url_for('deleteRestaurant', restaurant_id=restaurant.id)}}'>Delete</a>
+            </div>
+        {% endif %}
         <h4>{{ restaurant.website }}</h4>
         <hr>
     {% endfor %}
