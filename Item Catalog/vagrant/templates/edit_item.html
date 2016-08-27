@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <br>
+    <br>
+    {% if not error %}
+        <h3>Edit Menu Item</h3>
+        <br>
+        <form action="{{ url_for('editItem', category_id=category_id, id=item.id)}}" method = 'post'>
+            <div>
+                <label>Name:</label><br>
+                <input type ='text' size='100' name='name' value='{{item.name }}'><br><br>
+                <label>Description:</label><br>
+                <textarea name='description' rows='5' cols='40'>{{item.description }}</textarea><br><br>
+                <label>Price:</label><br>
+                <input type = 'text' size='8' name='price' value='{{item.price}}'><br><br>
+            </div>
+            <input type='submit'>
+            <a href = "{{url_for('categoryDetail', category_id=category_id)}}">Cancel</a>
+        </form>
+    {% endif %}
+{% endblock %}

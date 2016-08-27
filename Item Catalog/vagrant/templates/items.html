@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <br>
+    <br>
+    <h3>Course of {{ category.name }} </h3>
+    <br>
+    <div class="container">
+        {% for i in items %}
+            <div class="row">
+                <span class='col-md-3'><p>{{i.name}}</p></span>
+                <span class='col-md-2'><p>{{i.price}}</p></span>
+                <div class='col-md-5'>
+                    <p>{{i.description}}</p>
+                </div>
+                {% if session['user_id'] == i.user_id %}
+                    <div class = "col-md-2">
+                        <a class="btn btn-default" href="{{url_for('editItem',category_id=category.id, id=i.id)}}">Edit</a>
+                        <a class="btn btn-default" href="{{url_for('deleteItem', category_id=category.id, id=i.id)}}" >Delete</a>
+                    </div>
+                {% endif %}
+            </div>
+            <hr>
+        {% endfor %}
+    </div>
+    {% if session['user_id'] == category.user_id %}
+        <a class="btn btn-default" href="{{url_for('newItem', category_id=category.id)}}">Add a new course item</a>
+    {% endif %}
+{% endblock %}

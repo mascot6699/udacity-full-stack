@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+
+
+{% block content %}
+    
+    {% for category in categories %}
+        <h1><a href="{{ url_for('categoryDetail', category_id=category.id)}}">{{category.name}}</a></h1>
+        {% if session['user_id'] == category.user_id %}
+            <div class="pull-right">
+                <a class="btn btn-default" href="{{url_for('editCategory',category_id=category.id)}}">Edit</a>
+                <a class="btn btn-default" href="{{url_for('deleteCategory', category_id=category.id)}}">Delete</a>
+            </div>
+        {% endif %}
+        <br>
+        <hr>
+    {% endfor %}
+    <a class="btn btn-default" href="{{ url_for('newCategory') }}">
+        Create New Category
+    </a>
+{% endblock %}
+

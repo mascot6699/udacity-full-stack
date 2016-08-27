@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<br>
+<br>
+{% if not error %}
+    <h3>Edit category</h3>
+    <hr>
+    <form class="container" action="{{ url_for('editCategory', category_id=category.id)}}" method='post'>
+        <label>Name:</label><br>
+        <input type ='text' size='100' name='name' value={{category.name}}><br><br>
+        <input class="btn btn-default" type='submit' value='Update'>
+    </form>
+{% endif %}
+{% endblock %}
