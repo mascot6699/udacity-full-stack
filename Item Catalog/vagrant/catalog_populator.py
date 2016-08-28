@@ -60,7 +60,6 @@ item3 = Item(name='Intro to Data Analysis', user_id=user_id_1, category=category
 session.add(item3)
 session.commit()
 
-# Items for 'badminton's
 category3 = Category(name='Android Basics Nanodegree', user_id=user_id_1)
 session.add(category3)
 session.commit()

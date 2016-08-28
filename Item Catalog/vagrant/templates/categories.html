@@ -14,8 +14,10 @@
         <br>
         <hr>
     {% endfor %}
+    {% if session['user_id'] %}
     <a class="btn btn-default" href="{{ url_for('newCategory') }}">
         Create New Category
     </a>
+    {% endif %}
 {% endblock %}
 

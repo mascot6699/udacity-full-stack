@@ -1,10 +1,14 @@
 from flask import Flask, session, url_for, flash, jsonify, redirect, render_template, make_response, request
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+
 from database_setup import Base, Category, Item, User
 
 from oauth2client import client, crypt
-import httplib2
+from functools import wraps
+import random
+import string
+import json
 
 app = Flask(__name__)
 
@@ -13,8 +17,6 @@ Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)
 db_session = DBSession()
-
-import random, string, requests, json
 
 WEB_CLIENT_ID = json.loads(open('client_secret.json', 'r').read())['web']['client_id']
 
@@ -38,6 +40,15 @@ def get_user_id(email):
         return user.id
     except:
         return None
+
+
+def login_required(f):
+    @wraps(f)
+    def df(*args, **kwargs):
+        if session and session.get('user_id', None) is None:
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return df
 
 
 # For disconnecting from google plus
@@ -140,10 +151,12 @@ def categoryList():
 
 
 @app.route('/add/category/', methods=['GET', 'POST'])
+@login_required
 def newCategory():
     """
     Show addition of category form
     """
+    # if session and session.get('user_id', None) is None:
     if request.method == 'POST':
         newCategory = Category(name=request.form['name'], user_id=session['user_id'])
         db_session.add(newCategory)
@@ -152,9 +165,11 @@ def newCategory():
         return redirect(url_for('categoryList'))
     else:
         return render_template('add_category.html')
+    # return redirect(url_for('login'))
 
 
 @app.route('/category/<int:category_id>/delete/', methods=['GET', 'POST'])
+@login_required
 def deleteCategory(category_id):
     """
     Page to delete a category.
@@ -178,6 +193,7 @@ def deleteCategory(category_id):
 
 
 @app.route('/category/<int:category_id>/edit/', methods=['GET', 'POST'])
+@login_required
 def editCategory(category_id):
     """
     Page to edit a category.
@@ -210,6 +226,7 @@ def categoryDetail(category_id):
 
 
 @app.route('/category/<int:category_id>/new/', methods=['GET', 'POST'])
+@login_required
 def newItem(category_id):
     """
     page to create a new  item.
@@ -226,6 +243,7 @@ def newItem(category_id):
 
 
 @app.route('/category/<int:category_id>/<int:id>/edit/', methods=['GET', 'POST'])
+@login_required
 def editItem(category_id, id):
     """
     page to edit a item.
@@ -254,6 +272,7 @@ def editItem(category_id, id):
 
 
 @app.route('/category/<int:category_id>/<int:id>/delete/', methods=['GET', 'POST'])
+@login_required
 def deleteItem(category_id, id):
     """
     page to delete a item.
@@ -296,6 +315,6 @@ def item_api(category, item_id):
 
 
 if __name__ == '__main__':
-    app.debug = True
+    # app.debug = True
     app.secret_key = "not_very_secretive"
     app.run(host='0.0.0.0', port=8080)
