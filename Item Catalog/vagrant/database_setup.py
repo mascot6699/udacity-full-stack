@@ -39,7 +39,7 @@ class Category(Base):
             'id': self.id,
             'name': self.name,
             'user_id': self.user_id
-            }
+        }
 
 
 class Item(Base):
@@ -67,7 +67,7 @@ class Item(Base):
             'price': self.price,
             'image': self.image,
             'user_id': self.user_id
-            }
+        }
 
 
 engine = create_engine('sqlite:///catalog.db')

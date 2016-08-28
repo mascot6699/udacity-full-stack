@@ -18,11 +18,15 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 db_session = DBSession()
 
-WEB_CLIENT_ID = json.loads(open('client_secret.json', 'r').read())['web']['client_id']
+WEB_CLIENT_ID = json.loads(open('client_secret.json', 'r').read())[
+    'web']['client_id']
 
 
 def create_user(session):
-    newUser = User(name=session['username'], email=session['email'], picture=session['picture'])
+    newUser = User(
+        name=session['username'],
+        email=session['email'],
+        picture=session['picture'])
     db_session.add(newUser)
     db_session.commit()
     user = db_session.query(User).filter_by(email=session['email']).one()
@@ -56,7 +60,8 @@ def login_required(f):
 def gdisconnect():
 
     if session['email'] is None:
-        response = make_response(json.dumps('Current user not connected.'), 401)
+        response = make_response(
+            json.dumps('Current user not connected.'), 401)
         response.headers['Content-Type'] = 'application/json'
         return response
     else:
@@ -86,7 +91,8 @@ def gconnect():
         # If multiple clients access the backend server:
         if idinfo['aud'] not in [WEB_CLIENT_ID]:
             raise crypt.AppIdentityError("Unrecognized client.")
-        if idinfo['iss'] not in ['accounts.google.com', 'https://accounts.google.com']:
+        if idinfo['iss'] not in ['accounts.google.com',
+                                 'https://accounts.google.com']:
             raise crypt.AppIdentityError("Wrong issuer.")
     except crypt.AppIdentityError as e:
         response = make_response(json.dumps(e.message), 401)
@@ -97,7 +103,8 @@ def gconnect():
     stored_gplus_id = session.get('gplus_id')
 
     if gplus_id == stored_gplus_id:
-        response = make_response(json.dumps('Current user is already connected.'), 200)
+        response = make_response(
+            json.dumps('Current user is already connected.'), 200)
         response.headers['Content-Type'] = 'application/json'
         return response
 
@@ -117,7 +124,8 @@ def gconnect():
     session['user_id'] = user_id
 
     # response to be shown
-    output = '<h3>Welcome, {}!</h3><img src="{}" class="google-img">'.format(session['username'], session['picture'])
+    output = '<h3>Welcome, {}!</h3><img src="{}" class="google-img">'.format(
+        session['username'], session['picture'])
     flash("You are now logged in as {}".format(session['username']))
     return output
 
@@ -136,7 +144,10 @@ def logout():
 # Create anti-forgery state token
 @app.route('/login')
 def login():
-    state = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in xrange(32))
+    state = ''.join(
+        random.choice(
+            string.ascii_uppercase +
+            string.digits) for x in xrange(32))
     session['state'] = state
     return render_template("login.html", state=state)
 
@@ -158,7 +169,9 @@ def newCategory():
     """
     # if session and session.get('user_id', None) is None:
     if request.method == 'POST':
-        newCategory = Category(name=request.form['name'], user_id=session['user_id'])
+        newCategory = Category(
+            name=request.form['name'],
+            user_id=session['user_id'])
         db_session.add(newCategory)
         db_session.commit()
         flash("New category created!")
@@ -186,7 +199,8 @@ def deleteCategory(category_id):
             if category.user_id != session['user_id']:
                 error = True
                 flash("Only owner can delete their category!")
-            return render_template('delete_category.html', category=category, error=error)
+            return render_template(
+                'delete_category.html', category=category, error=error)
     else:
         flash("Only owner can delete their category!")
         return redirect(url_for('categoryList'))
@@ -202,7 +216,8 @@ def editCategory(category_id):
     category = db_session.query(Category).filter_by(id=category_id).one()
     if category.user_id == session['user_id']:
         if request.method == 'POST':
-            category.name = request.form['name'] if request.form['name'] else category.name
+            category.name = request.form['name'] if request.form[
+                'name'] else category.name
             db_session.add(category)
             db_session.commit()
             flash("Category has been edited!")
@@ -211,7 +226,8 @@ def editCategory(category_id):
             if category.user_id != session['user_id']:
                 error = True
                 flash("Only owner can edit their category!")
-            return render_template('edit_category.html', category=category, error=error)
+            return render_template('edit_category.html',
+                                   category=category, error=error)
     else:
         flash("Only owner can delete their category!")
         return redirect(url_for('categoryList'))
@@ -232,8 +248,9 @@ def newItem(category_id):
     page to create a new  item.
     """
     if request.method == 'POST':
-        newItem = Item(name=request.form['name'], description=request.form['description'], 
-            price=request.form['price'], category_id=category_id, user_id=session['user_id'])
+        newItem = Item(name=request.form['name'], description=request.form['description'],
+                       price=request.form['price'], category_id=category_id, 
+                       user_id=session['user_id'])
         db_session.add(newItem)
         db_session.commit()
         flash("Item has been created!")
@@ -242,7 +259,8 @@ def newItem(category_id):
         return render_template('add_item.html', category_id=category_id)
 
 
-@app.route('/category/<int:category_id>/<int:id>/edit/', methods=['GET', 'POST'])
+@app.route('/category/<int:category_id>/<int:id>/edit/',
+           methods=['GET', 'POST'])
 @login_required
 def editItem(category_id, id):
     """
@@ -252,7 +270,8 @@ def editItem(category_id, id):
     editedItem = db_session.query(Item).filter_by(id=id).one()
     if editedItem.user_id == session['user_id']:
         if request.method == 'POST':
-            editedItem.name = request.form['name'] if request.form['name'] else editedItem.name
+            editedItem.name = request.form['name'] if request.form[
+                'name'] else editedItem.name
             if request.form['description']:
                 editedItem.description = request.form['description']
             if request.form['price']:
@@ -265,13 +284,15 @@ def editItem(category_id, id):
             if editedItem.user_id != session['user_id']:
                 error = True
                 flash("Only owner can edit their items!")
-            return render_template('edit_item.html', item=editedItem, category_id=category_id, error=error)
+            return render_template(
+                'edit_item.html', item=editedItem, category_id=category_id, error=error)
     else:
         flash("Only owner can edit their items!")
         return redirect(url_for('categoryDetail'))
 
 
-@app.route('/category/<int:category_id>/<int:id>/delete/', methods=['GET', 'POST'])
+@app.route('/category/<int:category_id>/<int:id>/delete/',
+           methods=['GET', 'POST'])
 @login_required
 def deleteItem(category_id, id):
     """
@@ -289,7 +310,8 @@ def deleteItem(category_id, id):
             if item.user_id != session['user_id']:
                 error = True
                 flash("Only owner can delete their items!")
-            return render_template('delete_item_confirm.html', item=item, error=error)
+            return render_template(
+                'delete_item_confirm.html', item=item, error=error)
     else:
         flash("Only owner can delete their items!")
         return redirect(url_for('categoryDetail'))
