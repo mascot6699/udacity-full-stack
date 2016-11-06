@@ -49,7 +49,7 @@ def get_user_id(email):
 def login_required(f):
     @wraps(f)
     def df(*args, **kwargs):
-        if session and session.get('user_id', None) is None:
+        if not session or session.get('user_id', None) is None:
             return redirect(url_for('login'))
         return f(*args, **kwargs)
     return df
